@@ -1,0 +1,141 @@
+import {
+  HomeIcon,
+  UserCircleIcon,
+  TableCellsIcon,
+  BellIcon,
+  ArrowRightOnRectangleIcon,
+  UserPlusIcon,
+  RectangleStackIcon,
+  Square2StackIcon,
+  PlusIcon,
+  ClipboardDocumentCheckIcon
+} from "@heroicons/react/24/solid";
+import { Home, View, Profile, Tables, Notifications } from "@/pages/dashboard";
+import { SignIn, SignUp } from "@/pages/auth";
+import { MView } from "@/pages/mview";
+import { SquareRounded } from "@mui/icons-material";
+import ViewGroup from "./pages/dashboard/viewgroup";
+import ViewRoom from "./pages/views/roompage";
+import ViewCat from "./pages/views/catpage";
+import Add from "./pages/dashboard/add";
+import Inventory from "./pages/dashboard/inventory";
+
+const icon = {
+  className: "w-5 h-5 text-inherit",
+};
+// const state = useContext(LoginContext);
+const decoded = JSON.parse(localStorage.getItem('decoded'));
+const log = localStorage.getItem('log');
+
+console.log(decoded)
+
+export const routes = [
+  {
+    layout: "dashboard",
+    pages: [
+      {
+        icon: <HomeIcon {...icon} />,
+        name: "home",
+        path: "/home",
+        element: <Home />,
+        available: ["SA", "TM", "S", "A", "BM"]
+      },
+      {
+        icon: <PlusIcon {...icon} />,
+        name: "add",
+        path: "/add",
+        element: <Add />,
+        available: ["SA", "S", "A"]
+      },
+      {
+        icon: <Square2StackIcon {...icon} />,
+        name: "view",
+        path: "/view",
+        element: <View />,
+        available: ["SA", "TM", "S", "A", "BM"]
+      },
+      {
+        icon: <ClipboardDocumentCheckIcon {...icon} />,
+        name: "Inventory",
+        path: '/inventory',
+        element: <Inventory />,
+        available: ["SA", "S", "A"]
+      },
+      {
+        icon: <RectangleStackIcon {...icon} />,
+        name: "view - group",
+        path: "/viewgroup",
+        element: <ViewGroup />,
+        available: ["SA", "TM", "S", "A", "BM"],
+        inpages: [
+          {
+            name: "view - catagory",
+            path: "/viewgroup/cat/:id",
+            element: <ViewCat />,
+            available: ["SA", "TM", "S", "A", "BM"]
+          },
+          {
+            name: "view - room",
+            path: "/viewgroup/room/:id",
+            element: <ViewRoom />,
+            available: ["SA", "TM", "S", "A", "BM"]
+          }
+        ]
+      },
+      {
+        icon: <UserCircleIcon {...icon} />,
+        name: "profile",
+        path: "/profile",
+        element: <Profile />,
+        available: ["SA", "TM", "S", "A", "BM"]
+      },
+      {
+        icon: <TableCellsIcon {...icon} />,
+        name: "tables",
+        path: "/tables",
+        element: <Tables />,
+        available: ["SA", "TM", "S", "A", "BM"]
+      },
+      {
+        icon: <BellIcon {...icon} />,
+        name: "notifactions",
+        path: "/notifactions",
+        element: <Notifications />,
+        available: ["SA", "TM", "S"]
+      },
+    ],
+  },
+  {
+    title: "auth pages",
+    layout: "auth",
+    pages: [
+      {
+        icon: <ArrowRightOnRectangleIcon {...icon} />,
+        name: "sign in",
+        path: "/sign-in",
+        element: <SignIn />,
+      },
+      {
+        icon: <UserPlusIcon {...icon} />,
+        name: "sign up",
+        path: "/sign-up",
+        element: <SignUp />,
+        available: ["SA", "TM"]
+      },
+    ],
+  },
+  {
+    title: "mview",
+    layout: "mviews",
+    pages: [
+      {
+        name: "View Scaned Rooms",
+        path: "/mview",
+        element: <MView />
+      },
+    ]
+  }
+];
+
+
+export default routes;

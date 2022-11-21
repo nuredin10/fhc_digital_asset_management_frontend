@@ -1,0 +1,477 @@
+import React, { useCallback, useMemo, useState, useRef } from 'react';
+import MaterialReactTable from 'material-react-table';
+import {
+    Box,
+    Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
+    IconButton,
+    Stack,
+    TextField,
+    Tooltip,
+} from '@mui/material';
+import {
+    Modal,
+    // Button,
+    ModalClose,
+    Typography,
+    Sheet,
+    Divider
+} from '@mui/joy'
+
+import { Delete, Edit, QrCode } from '@mui/icons-material';
+// import { data, states } from './makeData';
+import axios from '../http/axios';
+import QRCode from '@/components/QRCode';
+import { useReactToPrint } from 'react-to-print';
+import SimpleTable from './simple-table';
+
+export default function CURDTable({ data }) {
+    const [createModalOpen, setCreateModalOpen] = useState(false);
+    const [tableData, setTableData] = useState(() => data);
+    const [validationErrors, setValidationErrors] = useState({});
+    const [printClick, setPrintClick] = useState(false);
+    const [openQR, setOpenQR] = useState(false);
+    const [QRData, setQRData] = useState();
+    const printRef = useRef();
+    const reportRef = useRef();
+
+    const printReport = useReactToPrint({
+        content: () => reportRef.current
+    })
+
+
+
+    const printQRHandler = useReactToPrint({
+        content: () => printRef.current
+    })
+    const handleQROpen = (row) => {
+        setOpenQR(true);
+        setQRData(row.id);
+    }
+
+    const handleCreateNewRow = (values) => {
+        tableData.push(values);
+        setTableData([...tableData]);
+    };
+
+    const handleSaveRowEdits = async ({ exitEditingMode, row, values }) => {
+        if (!Object.keys(validationErrors).length) {
+            console.log(values);
+            tableData[row.index] = values;
+            //send/receive api updates here, then refetch or update local table data for re-render
+            axios.put('/update', { values }, {
+                withCredentials: true,
+            })
+                .then(function (response) {
+                    if (response.data.msg == 'success') {
+                        console.log('Success');
+                    }
+                    else if (response.data.msg == 'fail') {
+                        console.log('fail')
+                    }
+                })
+            setTableData([...tableData]);
+            exitEditingMode(); //required to exit editing mode and close modal
+        }
+    };
+
+    const handleDeleteRow = useCallback(
+        (row) => {
+            console.log('clicked')
+            if (
+                !confirm(`Are you sure you want to delete ${row.getValue('firstName')}`)
+            ) {
+                return;
+            }
+            //send api delete request here, then refetch or update local table data for re-render
+            tableData.splice(row.index, 1);
+            setTableData([...tableData]);
+        },
+        [tableData],
+    );
+
+    const printQRCode = (row) => {
+        setOpenQR(true);
+
+    }
+
+    const getCommonEditTextFieldProps = useCallback(
+        (cell) => {
+            return {
+                error: !!validationErrors[cell.id],
+                helperText: validationErrors[cell.id],
+                onBlur: (event) => {
+                    const isValid =
+                        cell.column.id === 'email'
+                            ? validateEmail(event.target.value)
+                            : cell.column.id === 'age'
+                                ? validateAge(+event.target.value)
+                                : validateRequired(event.target.value);
+                    if (!isValid) {
+                        //set validation error for cell if invalid
+                        setValidationErrors({
+                            ...validationErrors,
+                            [cell.id]: `${cell.column.columnDef.header} is required`,
+                        });
+                    } else {
+                        //remove validation error for cell if valid
+                        delete validationErrors[cell.id];
+                        setValidationErrors({
+                            ...validationErrors,
+                        });
+                    }
+                },
+            };
+        },
+        [validationErrors],
+    );
+
+
+    const columns = useMemo(
+        () => [
+            {
+                accessorKey: 'id',
+                header: 'ID',
+                enableColumnOrdering: false,
+                enableEditing: false, //disable editing on this column
+                enableSorting: false,
+                size: 80,
+            },
+            {
+                accessorKey: 'name',
+                header: 'Name',
+                size: 140,
+                muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
+                    ...getCommonEditTextFieldProps(cell),
+                }),
+            },
+            {
+                accessorKey: 'asset_status',
+                header: 'Asset Status',
+                size: 140,
+                muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
+                    ...getCommonEditTextFieldProps(cell),
+                }),
+            },
+            {
+                accessorKey: 'class_code',
+                header: 'Class Code',
+                muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
+                    ...getCommonEditTextFieldProps(cell),
+                }),
+            },
+            {
+                accessorKey: 'posting_group',
+                header: 'Posting Group',
+                size: 80,
+                muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
+                    ...getCommonEditTextFieldProps(cell),
+                }),
+            },
+            {
+                accessorKey: 'sub_code',
+                header: 'Sub Code',
+                muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
+                    ...getCommonEditTextFieldProps(cell),
+                }),
+            },
+            {
+                accessorKey: 'location_code',
+                header: 'Location Code',
+                size: 80,
+                muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
+                    ...getCommonEditTextFieldProps(cell),
+                }),
+            },
+            {
+                accessorKey: 'owner',
+                header: 'Owner',
+                size: 80,
+                muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
+                    ...getCommonEditTextFieldProps(cell),
+                }),
+            },
+            {
+                accessorKey: 'entrusted_id',
+                header: 'Entrusted ID',
+                size: 80,
+                muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
+                    ...getCommonEditTextFieldProps(cell),
+                    type: 'number',
+                }),
+            },
+            {
+                accessorKey: 'price',
+                header: 'Price',
+                size: 80,
+                muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
+                    ...getCommonEditTextFieldProps(cell),
+                    type: 'number'
+                }),
+            },
+            {
+                accessorKey: 'residual_value',
+                header: 'Residual Value',
+                size: 80,
+                muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
+                    ...getCommonEditTextFieldProps(cell),
+                    type: 'number'
+                }),
+            },
+            {
+                accessorKey: 'purchase_date',
+                header: 'Purchase Date',
+                size: 80,
+                muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
+                    ...getCommonEditTextFieldProps(cell),
+                    type: 'date',
+                }),
+            },
+            {
+                accessorKey: 'commision_date',
+                header: 'Commision Date',
+                size: 80,
+                muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
+                    ...getCommonEditTextFieldProps(cell),
+                    type: 'date',
+                }),
+            },
+            {
+                accessorKey: 'asset_life',
+                header: 'Asset Life',
+                size: 80,
+                muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
+                    ...getCommonEditTextFieldProps(cell),
+                }),
+            },
+            {
+                accessorKey: 'depreciation_start_date',
+                header: 'Depreciation Start Date',
+                size: 120,
+                muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
+                    ...getCommonEditTextFieldProps(cell),
+                    type: 'date',
+                }),
+            },
+            {
+                accessorKey: 'document_number',
+                header: 'Document No_',
+                size: 80,
+                muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
+                    ...getCommonEditTextFieldProps(cell),
+                    type: 'number',
+                }),
+            },
+            {
+                accessorKey: 'quantity',
+                header: 'Quantity',
+                size: 80,
+                muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
+                    ...getCommonEditTextFieldProps(cell),
+                }),
+                type: 'number',
+            },
+            {
+                accessorKey: 'unit',
+                header: 'Unit',
+                size: 80,
+                muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
+                    ...getCommonEditTextFieldProps(cell),
+                }),
+            },
+
+        ],
+        [getCommonEditTextFieldProps],
+    );
+
+
+    return (
+        <>
+            {
+
+                <div
+                    style={{
+                        display: 'none'
+                    }}
+                >
+                    <div ref={reportRef}>
+                        <SimpleTable data={data} />
+                    </div>
+                </div>
+            }
+            <Modal
+                aria-labelledby="modal-title"
+                aria-describedby="modal-desc"
+                open={openQR}
+                onClose={() => setOpenQR(false)}
+                sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center'
+                }}
+            >
+                <Sheet
+                    sx={{
+                        maxWidth: 600,
+                        borderRadius: 'md',
+                        p: 1,
+                        boxShadow: 'md',
+                        border: '1px solid grey'
+                    }}
+                >
+                    <ModalClose />
+                    <Typography
+                        component="h2"
+                        id="modal-title"
+                        level="h2"
+                        textColor="inherit"
+                        fontWeight="xl"
+                        mb={1}
+                    >
+                        QR Code
+                    </Typography>
+                    <Divider />
+                    <div className='flex flex-col gap-4 pt-2 pb-1'>
+                        <div className='w-auto px-10'>
+                            {
+                                QRData &&
+                                <div ref={printRef}>
+                                    <QRCode data={QRData} />
+                                </div>
+                            }
+                        </div>
+                        <div className='w-full px-10'>
+                            <button
+                                onClick={printQRHandler}
+                                className='w-full py-3 px-4 bg-blue-600 text-white text-lg rounded-lg'>Print QR</button>
+                        </div>
+                    </div>
+                </Sheet>
+            </Modal>
+            <MaterialReactTable
+                displayColumnDefOptions={{
+                    'mrt-row-actions': {
+                        muiTableHeadCellProps: {
+                            align: 'center',
+                        },
+                        size: 120,
+                    },
+                }}
+                columns={columns}
+                data={tableData}
+                editingMode="modal" //default
+                enableColumnOrdering
+                enableEditing
+                onEditingRowSave={handleSaveRowEdits}
+                renderRowActions={({ row, table }) => (
+                    <Box sx={{ display: 'flex', gap: '1rem' }}>
+                        <Tooltip arrow placement="left" title="Edit">
+                            <IconButton onClick={() => table.setEditingRow(row)}>
+                                <Edit />
+                            </IconButton>
+                        </Tooltip>
+                        <Tooltip arrow placement="right" title="Delete">
+                            <IconButton color="error" onClick={() => handleDeleteRow(row)}>
+                                <Delete />
+                            </IconButton>
+                        </Tooltip>
+                        <Tooltip arrow placement='right' title='Print QR'>
+                            <IconButton onClick={() => handleQROpen(row.original)}>
+                                <QrCode />
+                            </IconButton>
+                        </Tooltip>
+                    </Box>
+                )}
+                renderTopToolbarCustomActions={() => (
+                    <>
+                        <Button
+                            color="primary"
+                            onClick={() => setCreateModalOpen(true)}
+                            variant="contained"
+                        >
+                            Add Asset
+                        </Button>
+                        <Button
+                            color="primary"
+                            variant="contained"
+                            onClick={printReport}
+                        >
+                            Print Report
+                        </Button>
+                    </>
+                )}
+            />
+            <CreateNewAccountModal
+                columns={columns}
+                open={createModalOpen}
+                onClose={() => setCreateModalOpen(false)}
+                onSubmit={handleCreateNewRow}
+            />
+        </>
+    )
+}
+
+
+//example of creating a mui dialog modal for creating new rows
+export const CreateNewAccountModal = ({ open, columns, onClose, onSubmit }) => {
+    const [values, setValues] = useState(() =>
+        columns.reduce((acc, column) => {
+            acc[column.accessorKey ?? ''] = '';
+            return acc;
+        }, {}),
+    );
+
+    const handleSubmit = () => {
+        //put your validation logic here
+        onSubmit(values);
+        onClose();
+    };
+    return (
+        <Dialog open={open}>
+            <DialogTitle textAlign="center">Add New Asset</DialogTitle>
+            <DialogContent>
+                <form onSubmit={(e) => e.preventDefault()}>
+                    <Stack
+                        sx={{
+                            width: '100%',
+                            minWidth: { xs: '300px', sm: '360px', md: '400px' },
+                            gap: '1.5rem',
+                        }}
+                    >
+                        {columns.map((column) => (
+                            <TextField
+                                key={column.accessorKey}
+                                label={column.header}
+                                name={column.accessorKey}
+                                onChange={(e) =>
+                                    setValues({ ...values, [e.target.name]: e.target.value })
+                                }
+                            />
+                        ))}
+                    </Stack>
+                </form>
+            </DialogContent>
+            <DialogActions sx={{ p: '1.25rem' }}>
+                <Button onClick={onClose}>Cancel</Button>
+                <Button color="primary" onClick={handleSubmit} variant="contained">
+                    Add
+                </Button>
+            </DialogActions>
+        </Dialog>
+    );
+};
+
+
+const validateRequired = (value) => !!value.length;
+const validateEmail = (email) =>
+    !!email.length &&
+    email
+        .toLowerCase()
+        .match(
+            /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+        );
+const validateAge = (age) => age >= 18 && age <= 50;

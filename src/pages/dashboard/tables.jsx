@@ -1,0 +1,266 @@
+import React, { useState, useEffect } from 'react';
+import {
+  Card,
+  CardHeader,
+  CardBody,
+  Typography,
+  Avatar,
+  Chip,
+  Tooltip,
+  Progress,
+} from "@material-tailwind/react";
+import {
+  UserCircleIcon,
+  HomeIcon,
+  ChatBubbleLeftEllipsisIcon,
+  Cog6ToothIcon,
+  PencilIcon,
+} from "@heroicons/react/24/solid";
+import { EllipsisVerticalIcon } from "@heroicons/react/24/outline";
+import { authorsTableData, projectsTableData } from "@/data";
+import axios from '../../http/axios';
+
+
+const roleCheck = (role) => {
+  switch (role) {
+    case "SA":
+      return 'Super Admin';
+    case "TM":
+      return 'Team Leader';
+    case "BM": 
+      return 'Branch Manager';
+    case "S":
+      return 'Senior';
+    case "A": 
+      return 'Admin';
+    case 'V': 
+      return  "Viewer";
+    default:
+      return 'None';
+  }
+}
+
+
+export function Tables() {
+  const [admins, setAdmins] = useState();
+
+  useEffect(() => {
+    axios.get('/admin/view', {
+      withCredentials: true,
+    })
+      .then(function (response) {
+        setAdmins(response.data);
+        console.log(response.data);
+
+      })
+  }, []);
+
+  return (
+    <div className="mt-12 mb-8 flex flex-col gap-12">
+      <Card>
+        <CardHeader variant="gradient" color="blue" className="mb-8 p-6">
+          <Typography variant="h6" color="white">
+            Admin Table
+          </Typography>
+        </CardHeader>
+        <CardBody className="overflow-x-scroll px-0 pt-0 pb-2">
+          <table className="w-full min-w-[640px] table-auto">
+            <thead>
+              <tr>
+                {["admins", "role", "status", "started", ""].map((el) => (
+                  <th
+                    key={el}
+                    className="border-b border-blue-gray-50 py-3 px-5 text-left"
+                  >
+                    <Typography
+                      variant="small"
+                      className="text-[11px] font-bold uppercase text-blue-gray-400"
+                    >
+                      {el}
+                    </Typography>
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {
+                admins &&
+                admins.map(
+                  ({ id, fname, lname, email, role, updatedAt }, key) => {
+                    const className = `py-3 px-5 ${key === authorsTableData.length - 1
+                      ? ""
+                      : "border-b border-blue-gray-50"
+                      }`;
+
+                    return (
+                      <tr key={id}>
+                        <td className={className}>
+                          <div className="flex items-center gap-4">
+                            {/* <Avatar src={img} alt={name} size="sm" /> */}
+                            <UserCircleIcon
+                              className='w-20'
+                            />
+                            <div>
+                              <Typography
+                                variant="small"
+                                color="blue-gray"
+                                className="font-semibold"
+                              >
+                                {fname}
+                              </Typography>
+                              <Typography className="text-xs font-normal text-blue-gray-500">
+                                {email}
+                              </Typography>
+                            </div>
+                          </div>
+                        </td>
+                        <td className={className}>
+                          <Typography className="text-xs font-semibold text-blue-gray-600">
+                            {roleCheck(role)}
+                          </Typography>
+                          <Typography className="text-xs font-normal text-blue-gray-500">
+                            {role}
+                          </Typography>
+                        </td>
+                        <td className={className}>
+                          {/* <Chip
+                            variant="gradient"
+                            color={online ? "green" : "blue-gray"}
+                            value={online ? "online" : "offline"}
+                            className="py-0.5 px-2 text-[11px] font-medium"
+                          /> */}
+                        </td>
+                        <td className={className}>
+                          <Typography className="text-xs font-semibold text-blue-gray-600">
+                          {updatedAt}
+                        </Typography>
+                        </td>
+                        <td className={className}>
+                          <Typography
+                            as="a"
+                            href="#"
+                            className="text-xs font-semibold text-blue-gray-600"
+                          >
+                            Edit
+                          </Typography>
+                        </td>
+                      </tr>
+                    );
+                  }
+                )}
+            </tbody>
+          </table>
+        </CardBody>
+      </Card>
+      <Card className='hidden'>
+        <CardHeader variant="gradient" color="blue" className="mb-8 p-6">
+          <Typography variant="h6" color="white">
+            Asset Table
+          </Typography>
+        </CardHeader>
+        <CardBody className="overflow-x-scroll px-0 pt-0 pb-2">
+          <table className="w-full min-w-[640px] table-auto">
+            <thead>
+              <tr>
+                {["companies", "members", "budget", "completion", ""].map(
+                  (el) => (
+                    <th
+                      key={el}
+                      className="border-b border-blue-gray-50 py-3 px-5 text-left"
+                    >
+                      <Typography
+                        variant="small"
+                        className="text-[11px] font-bold uppercase text-blue-gray-400"
+                      >
+                        {el}
+                      </Typography>
+                    </th>
+                  )
+                )}
+              </tr>
+            </thead>
+            <tbody>
+              {projectsTableData.map(
+                ({ img, name, members, budget, completion }, key) => {
+                  const className = `py-3 px-5 ${key === projectsTableData.length - 1
+                    ? ""
+                    : "border-b border-blue-gray-50"
+                    }`;
+
+                  return (
+                    <tr key={name}>
+                      <td className={className}>
+                        <div className="flex items-center gap-4">
+                          <Avatar src={img} alt={name} size="sm" />
+                          <Typography
+                            variant="small"
+                            color="blue-gray"
+                            className="font-bold"
+                          >
+                            {name}
+                          </Typography>
+                        </div>
+                      </td>
+                      <td className={className}>
+                        {members.map(({ img, name }, key) => (
+                          <Tooltip key={name} content={name}>
+                            <Avatar
+                              src={img}
+                              alt={name}
+                              size="xs"
+                              variant="circular"
+                              className={`cursor-pointer border-2 border-white ${key === 0 ? "" : "-ml-2.5"
+                                }`}
+                            />
+                          </Tooltip>
+                        ))}
+                      </td>
+                      <td className={className}>
+                        <Typography
+                          variant="small"
+                          className="text-xs font-medium text-blue-gray-600"
+                        >
+                          {budget}
+                        </Typography>
+                      </td>
+                      <td className={className}>
+                        <div className="w-10/12">
+                          <Typography
+                            variant="small"
+                            className="mb-1 block text-xs font-medium text-blue-gray-600"
+                          >
+                            {completion}%
+                          </Typography>
+                          <Progress
+                            value={completion}
+                            variant="gradient"
+                            color={completion === 100 ? "green" : "blue"}
+                            className="h-1"
+                          />
+                        </div>
+                      </td>
+                      <td className={className}>
+                        <Typography
+                          as="a"
+                          href="#"
+                          className="text-xs font-semibold text-blue-gray-600"
+                        >
+                          <EllipsisVerticalIcon
+                            strokeWidth={2}
+                            className="h-5 w-5 text-inherit"
+                          />
+                        </Typography>
+                      </td>
+                    </tr>
+                  );
+                }
+              )}
+            </tbody>
+          </table>
+        </CardBody>
+      </Card>
+    </div>
+  );
+}
+
+export default Tables;
