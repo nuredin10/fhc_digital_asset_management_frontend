@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 // import { Dashboard, Auth, Views, MViewmain } from "@/layouts";
-const { Dashboard, Auth, Views, MViewmain } = React.lazy(() => import('@/layouts'));
+import { Dashboard, Auth, Views, MViewmain } from '@/layouts';
 import { LoginContext } from "./context/LoginContext";
 
 function App() {
