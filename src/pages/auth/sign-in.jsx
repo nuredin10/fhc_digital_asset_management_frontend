@@ -78,9 +78,6 @@ export function SignIn() {
           <CardBody className="flex flex-col gap-4">
             <Input onChange={(e) => setEmail(e.target.value)} type="email" label="Email" size="lg" />
             <Input onChange={(e) => setPassword(e.target.value)} type="password" label="Password" size="lg" />
-            <div className="-ml-2.5">
-              <Checkbox label="Remember Me" />
-            </div>
           </CardBody>
           <CardFooter className="pt-0">
             <Button

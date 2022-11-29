@@ -28,7 +28,7 @@ import {
 } from "@/data";
 import axios from '../../http/axios';
 import SimpleTable from "@/tables/simple-table";
-
+// import { useQuery } from "react-query";
 
 export function Home() {
   const [data, setData] = useState();
@@ -47,9 +47,26 @@ export function Home() {
     })
       .then(function (response) {
         setInfo(response.data);
-      })
+      });
+
   }, []);
 
+  // function View(){
+  //   const {data, status} = useQuery('info', fetchInfo);
+  //   if(status === 'loading'){
+  //     return <p>Loading...</p>
+  //   }
+  //   if(status === 'error'){
+  //     return <p>Error...</p>
+  //   }
+  //   if(status === 'success')
+  //   return data;
+  // }
+  async function fetchInfo() {
+    const res = await axios.get('view/info');
+    return res.data;
+  }
+  // View();
   return (
     <div className="mt-12">
       <div className="mb-12 grid gap-y-10 gap-x-6 md:grid-cols-2 xl:grid-cols-4">
@@ -86,7 +103,6 @@ export function Home() {
         </div>
       </div>
     </div>
-
   );
 }
 

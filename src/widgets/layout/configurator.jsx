@@ -16,6 +16,7 @@ import {
   setFixedNavbar,
 } from "@/context";
 import axios from '../../http/axios';
+import Cookies from 'js-cookie';
 
 function formatNumber(number, decPlaces) {
   decPlaces = Math.pow(10, decPlaces);
@@ -51,7 +52,8 @@ export function Configurator() {
 
   const LogoutHandler = () => {
     console.log('clicked')
-    axios.post('/logout',{
+    console.log(Cookies);
+    axios.post('/logout',{cookie: Cookies.get('refreshToken')},{
       withCredentials: true,
     })
       .then(function (response) {
@@ -61,7 +63,7 @@ export function Configurator() {
         } 
       })
   }
-
+  
 
   const sidenavColors = {
     blue: "from-blue-400 to-blue-600",

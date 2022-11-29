@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import axios from '../../http/axios';
 import { Link } from "react-router-dom";
+import { useSnackbar } from 'notistack';
+import * as Yup from 'yup';
+import { useFormik } from 'formik';
+
 import {
   Alert,
   Card,
@@ -15,11 +19,9 @@ import {
   Option,
   Radio
 } from "@material-tailwind/react";
-
-
 export function SignUp() {
-  const [role, setRole] = useState();
 
+  const [role, setRole] = useState();
   const [fname, setFname] = useState();
   const [lname, setLname] = useState();
   const [uname, setUname] = useState();
@@ -27,30 +29,135 @@ export function SignUp() {
   const [phone, setPhone] = useState();
   const [nrole, setNrole] = useState();
   const [password, setPassword] = useState();
+  const [formValues, setFormValues] = useState([]);
+  const [allforms, setAllforms] = useState([]);
 
+  const { enqueueSnackbar } = useSnackbar();
+
+  // const Form = () => {
+  //   const initialValues = {
+  //     fname: "",
+  //     lname: "",
+  //     uname: "",
+  //     email: "",
+  //     phone: "",
+  //     nrole: "",
+  //     password: ""
+  //   };
+  //   const [formValues, setFormValues] = useState(initialValues);
+  //   const [formErrors, setFormErrors] = useState({});
+  //   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  //   const submitForm = () => {
+  //     console.log(formValues);
+  //   };
+
+  //   const handleChange = (e) => {
+  //     e.preventDefault();
+  //     setFormErrors(validate(formValues));
+  //     setIsSubmitting(true);
+  //   };
+
+  //   const validate = (values) => {
+  //     let errors = {};
+  //     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
+  //     if (!values.email) {
+
+  //     }
+  //   }
+
+  // }
+
+  // const initialValues = {
+  //   fname: "",
+  //   lname: "",
+  //   uname: "",
+  //   email: "",
+  //   phone: "",
+  //   nrole: "",
+  //   password: ""
+  // };
+  // const SignUpSchema = Yup.object().shape({
+  //   fname: Yup.string()
+  //     .min(3, "Name Short!")
+  //     .required("First Name is required"),
+  //   lname: Yup.string()
+  //     .min(3, "Name Short!")
+  //     .required("First Name is required"),
+  //   uname: Yup.string()
+  //     .required("Username is required"),
+  //   email: Yup.string()
+  //     .email()
+  //     .required("Email is required"),
+  //   phone: Yup.string()
+  //     .min(3, "Phone Number must be longer"),
+  //   nrole: Yup.required("Role is Required"),
+  //   password: Yup.string()
+  //     .min(8, "Password must be greater than 8 characters"),
+
+  // })
+
+  // const formik = useFormik({
+  //   initialValues: {
+  //     fname: "",
+  //     lname: "",
+  //     uname: "",
+  //     email: "",
+  //     phone: "",
+  //     nrole: "",
+  //     password: ""
+  //   },
+  //   validationSchema: Yup.object({
+  //     fname: Yup.string().min(3, "Name Short!").required("First Name is required"),
+  //     lname: Yup.string().min(3, "Name Short!").required("First Name is required"),
+  //     uname: Yup.string().required("Username is required"),
+  //     email: Yup.string().email().required("Email is required"),
+  //     phone: Yup.string().min(3, "Phone Number must be longer"),
+  //     // nrole: Yup.required("Role is Required"),
+  //     password: Yup.string().min(8, "Password must be greater than 8 characters"),
+  //   }),
+
+  //   onSubmit: () => {
+  //     console.log('clicked');
+  //     // axios.post('/signup', data, {
+  //     //   withCredentials: true
+  //     // })
+  //     //   .then(function (response) {
+  //     //     if (response.data.msg === 'success') {
+  //     //       // <Alert>Account Successfully created</Alert>
+  //     //       // console.log('Account Creation Success');
+  //     //       enqueueSnackbar('AccountSuccessfullt Created', { variant: 'success' });
+
+  //     //     }
+  //     //   }).catch(function (error) {
+  //     //     <Alert color="red">THere was an error creating the Account</Alert>
+  //     //   });
+  //   }
+  // });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormValues({ ...formValues, [name]: value });
+
+  };
 
   const handleSignIn = () => {
+    formValues && setAllforms({ ...formValues, 'role': role });
+    console.log(allforms);
+
     axios.post('/signup', {
-      fname: fname,
-      lname: lname,
-      uname: uname,
-      email: email,
-      phone_number: phone,
-      role: nrole,
-      gender: 'M',
-      password: password,
+      formValues
     })
+    axios.post('/signup', { formValues })
       .then(function (response) {
         if (response.data.msg === 'success') {
-          <Alert>Account Successfully created</Alert>
-          console.log('Account Creation Success')
+          enqueueSnackbar('AccountSuccessfullt Created', { variant: 'success' });
+
         }
       }).catch(function (error) {
-        <Alert color="red">THere was an error creating the Account</Alert>
+        enqueueSnackbar("Unable to Create Account", { variant: 'error' });
       })
-
   }
-
   return (
     <>
       <img
@@ -70,12 +177,13 @@ export function SignUp() {
             </Typography>
           </CardHeader>
           <CardBody className="flex flex-col gap-4">
-            <Input onChange={(e) => setFname(e.target.value)} label="Firts Name" size="md" />
-            <Input onChange={(e) => setLname(e.target.value)} label="Last Name" size="md" />
-            <Input onChange={(e) => setUname(e.target.value)} label="Username" size="md" />
-            <Input onChange={(e) => setEmail(e.target.value)} type="email" label="Email" size="md" />
-            <Input onChange={(e) => setPhone(e.target.value)} label="Phone Number" size="md" />
-            <Select onChange={(e) => setNrole(e)} label="Select Role">
+            {/* <form className='flex flex-col gap-3' onSubmit={formik.handleSubmit}> */}
+            <Input onChange={(e) => handleChange(e)} name='fname' label="Firts Name" size="md" />
+            <Input onChange={(e) => handleChange(e)} name='lname' label="Last Name" size="md" />
+            <Input onChange={(e) => handleChange(e)} name='uname' label="Username" size="md" />
+            <Input onChange={(e) => handleChange(e)} name='email' type="email" label="Email" size="md" />
+            <Input onChange={(e) => handleChange(e)} name='phone_number' label="Phone Number" size="md" />
+            <Select onChange={(e) => setRole(e)} value={role} label="Select Role">
               <Option value="SA">Super Admin</Option>
               <Option value="TL">Team Leader</Option>
               <Option value="S">Senior</Option>
@@ -90,7 +198,8 @@ export function SignUp() {
                 Female<Radio id="Female" name="gender" />
               </div>
             </div>
-            <Input onChange={(e) => setPassword(e.target.value)} type="password" label="Password" size="md" />
+            <Input onChange={(e) => handleChange(e)} name='password' type="password" label="Password" size="md" />
+            {/* </form> */}
           </CardBody>
           <CardFooter className="pt-0">
             <Button
@@ -99,6 +208,8 @@ export function SignUp() {
               }}
               className='cursor-pointer'
               onClick={handleSignIn}
+              // type='submit'
+              // onClick={handleSigni}
               variant="gradient" fullWidth>
               Sign Up
             </Button>
