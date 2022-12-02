@@ -15,7 +15,7 @@ export const SimpleTable = ({ data }) => {
             },
             {
                 accessorKey: 'asset_group', //normal accessorKey
-                header: 'Address',
+                header: 'Asset Group',
             },
             {
                 accessorKey: 'asset_status',

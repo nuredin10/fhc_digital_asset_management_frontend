@@ -30,7 +30,7 @@ export default function ViewRoom() {
     </div>
     <div className='min-h-screen'>
       {
-        data && <CURDTable data={data}/>
+        data && <CURDTable data={data} room={id}/>
       }
     </div>
   </div>

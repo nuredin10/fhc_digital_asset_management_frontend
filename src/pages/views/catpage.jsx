@@ -30,7 +30,7 @@ export default function ViewCat() {
       </div>
       <div className='min-h-screen'>
         {
-          data && <CURDTable data={data}/>
+          data && <CURDTable data={data} cat={id}/>
         }
       </div>
     </div>

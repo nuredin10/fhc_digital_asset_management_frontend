@@ -21,33 +21,40 @@ import {
     Sheet,
     Divider
 } from '@mui/joy'
+import ethiopianDate from 'ethiopian-date';
+import { toEthiopian } from 'ethiopian-date';
 
 import { Delete, Edit, QrCode } from '@mui/icons-material';
 // import { data, states } from './makeData';
 import axios from '../http/axios';
 import QRCode from '@/components/QRCode';
 import { useReactToPrint } from 'react-to-print';
+import { useSnackbar } from 'notistack';
 import SimpleTable from './simple-table';
+import { SimpleMantine } from './simple-mantine';
 
-export default function CURDTable({ data }) {
+
+export default function CURDTable({ data, cat, room }) {
     const [createModalOpen, setCreateModalOpen] = useState(false);
     const [tableData, setTableData] = useState(() => data);
     const [validationErrors, setValidationErrors] = useState({});
     const [printClick, setPrintClick] = useState(false);
     const [openQR, setOpenQR] = useState(false);
+    const [openDelete, setOpenDelete] = useState(false);
+    const [deleterow, setDeleterow] = useState();
     const [QRData, setQRData] = useState();
     const printRef = useRef();
     const reportRef = useRef();
 
+    const { enqueueSnackbar } = useSnackbar();
     const printReport = useReactToPrint({
         content: () => reportRef.current
     })
 
-
-
     const printQRHandler = useReactToPrint({
         content: () => printRef.current
-    })
+    });
+
     const handleQROpen = (row) => {
         setOpenQR(true);
         setQRData(row.id);
@@ -79,24 +86,43 @@ export default function CURDTable({ data }) {
         }
     };
 
-    const handleDeleteRow = useCallback(
-        (row) => {
-            console.log('clicked')
-            if (
-                !confirm(`Are you sure you want to delete ${row.getValue('firstName')}`)
-            ) {
-                return;
+    // const handleDeleteRow = useCallback(
+    //     // console.log('clicked');
+    //     (row) => {
+    //         console.log('clicked')
+    //         if (
+    //             !confirm(`Are you sure you want to delete ${row.getValue('firstName')}`)
+    //         ) {
+    //             return;
+    //         }
+    //         //send api delete request here, then refetch or update local table data for re-render
+    //         tableData.splice(row.index, 1);
+    //         setTableData([...tableData]);
+    //     },
+    //     [tableData],
+    // );
+
+    const handleDeleteRow = (row) => {
+        console.log("Opened");
+        setOpenDelete(true);
+        setDeleterow(row.original);
+
+    };
+
+    const sendDeleteRequest = () => {
+        console.log(deleterow);
+        axios.put('/delete', { deleterow }, {
+            withCredentials: true,
+        }).then(function (response) {
+            if (response.data.msg == 'success') {
+                enqueueSnackbar('Item Deleted', { variant: 'warning' });
+                setOpenDelete(false);
             }
-            //send api delete request here, then refetch or update local table data for re-render
-            tableData.splice(row.index, 1);
-            setTableData([...tableData]);
-        },
-        [tableData],
-    );
+        })
+    };
 
     const printQRCode = (row) => {
         setOpenQR(true);
-
     }
 
     const getCommonEditTextFieldProps = useCallback(
@@ -291,6 +317,18 @@ export default function CURDTable({ data }) {
 
     return (
         <>
+            <Dialog open={openDelete}>
+                <DialogTitle textAlign="center">Delete Asset</DialogTitle>
+                <DialogContent>
+                    <h1>Are you sure you want to delete this asset</h1>
+                </DialogContent>
+                <DialogActions sx={{ p: '1.25rem' }}>
+                    <Button onClick={(e) => setOpenDelete(false)}>Cancel</Button>
+                    <Button onClick={sendDeleteRequest} color="error" className='bg-red-700' variant="contained">
+                        Delete
+                    </Button>
+                </DialogActions>
+            </Dialog>
             {
 
                 <div
@@ -299,7 +337,11 @@ export default function CURDTable({ data }) {
                     }}
                 >
                     <div ref={reportRef}>
-                        <SimpleTable data={data} />
+                        {/* <SimpleTable data={data} /> */}
+                        {/* {cat && <SimpleMantine elements={data} cat={cat} />} */}
+                        {/* {room && <SimpleMantine elements={data} room={room} />} */}
+                        <SimpleMantine elements={data} cat={cat} rom={room} />
+
                     </div>
                 </div>
             }
@@ -388,13 +430,13 @@ export default function CURDTable({ data }) {
                 )}
                 renderTopToolbarCustomActions={() => (
                     <>
-                        <Button
+                        {/* <Button
                             color="primary"
                             onClick={() => setCreateModalOpen(true)}
                             variant="contained"
                         >
                             Add Asset
-                        </Button>
+                        </Button> */}
                         <Button
                             color="primary"
                             variant="contained"
@@ -462,6 +504,7 @@ export const CreateNewAccountModal = ({ open, columns, onClose, onSubmit }) => {
                 </Button>
             </DialogActions>
         </Dialog>
+
     );
 };
 
