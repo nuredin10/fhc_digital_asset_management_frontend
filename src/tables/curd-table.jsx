@@ -66,7 +66,7 @@ export default function CURDTable({ data, cat, room }) {
     };
 
     const handleSaveRowEdits = async ({ exitEditingMode, row, values }) => {
-        if (!Object.keys(validationErrors).length) {
+        if (!Object.keys(validationErrorss).length) {
             console.log(values);
             tableData[row.index] = values;
             //send/receive api updates here, then refetch or update local table data for re-render

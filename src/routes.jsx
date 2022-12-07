@@ -38,7 +38,11 @@ export const routes = [
         name: "home",
         path: "/home",
         element: <Home />,
-        available: ["SA", "TM", "S", "A", "BM"]
+        available: ["SA", "TL", "S", "A", "BM"],
+        // available: [
+        //   {SA: 'true'},
+        //   {TL: 'true'},
+        // ]
       },
       {
         icon: <PlusIcon {...icon} />,
@@ -52,7 +56,7 @@ export const routes = [
         name: "view",
         path: "/view",
         element: <View />,
-        available: ["SA", "TM", "S", "A", "BM"]
+        available: ["SA", "TL", "S", "A", "BM"]
       },
       {
         icon: <ClipboardDocumentCheckIcon {...icon} />,
@@ -66,19 +70,19 @@ export const routes = [
         name: "view - group",
         path: "/viewgroup",
         element: <ViewGroup />,
-        available: ["SA", "TM", "S", "A", "BM"],
+        available: ["SA", "TL", "S", "A", "BM"],
         inpages: [
           {
             name: "view - catagory",
             path: "/viewgroup/cat/:id",
             element: <ViewCat />,
-            available: ["SA", "TM", "S", "A", "BM"]
+            available: ["SA", "TL", "S", "A", "BM"]
           },
           {
             name: "view - room",
             path: "/viewgroup/room/:id",
             element: <ViewRoom />,
-            available: ["SA", "TM", "S", "A", "BM"]
+            available: ["SA", "TL", "S", "A", "BM"]
           }
         ]
       },
@@ -87,21 +91,21 @@ export const routes = [
         name: "profile",
         path: "/profile",
         element: <Profile />,
-        available: ["SA", "TM", "S", "A", "BM"]
+        available: ["SA", "TL", "S", "A", "BM"]
       },
       {
         icon: <TableCellsIcon {...icon} />,
         name: "tables",
         path: "/tables",
         element: <Tables />,
-        available: ["SA", "TM", "S", "A", "BM"]
+        available: ["SA", "TL", "S", "A", "BM"]
       },
       {
         icon: <BellIcon {...icon} />,
         name: "notifactions",
         path: "/notifactions",
         element: <Notifications />,
-        available: ["SA", "TM", "S"]
+        available: ["SA", "TL", "S"]
       },
     ],
   },
@@ -120,7 +124,7 @@ export const routes = [
         name: "sign up",
         path: "/sign-up",
         element: <SignUp />,
-        available: ["SA", "TM"]
+        available: ["SA", "TL"]
       },
     ],
   },

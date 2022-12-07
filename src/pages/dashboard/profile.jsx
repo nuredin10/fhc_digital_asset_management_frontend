@@ -34,6 +34,16 @@ const roleCheck = (role) => {
   switch (role) {
     case "SA":
       return 'Super Admin';
+    case "TL":
+      return 'Team Leader';
+    case "S":
+      return 'Senrior';
+    case "BM":
+      return 'Branch Manager';
+    case "A":
+      return 'Admin';
+    case "V":
+      return 'Viewer';
     default:
       return 'None';
   }
@@ -55,6 +65,10 @@ export function Profile() {
         console.log(response.data)
       })
   }, []);
+
+  const resetInventory = () =>{
+     
+  }
 
   return (
     <>
@@ -110,7 +124,20 @@ export function Profile() {
                           Platform Settings
                         </Typography>
                         <div className="flex flex-col gap-12">
-                          {platformSettingsData.map(({ title, options }) => (
+                          <div>
+                            <Typography className='mb-4 block text-xs font-semibold uppercase text-blue-gray-500"'>Inventory</Typography>
+                            <div className='flex flex-col gap-6'>
+                              <div className='flex flex-row gap-3 items-center'>
+                                <Typography className='block text-xs font-bold uppercase'>Reset Inventory</Typography>
+                                <Button 
+                                onClick={resetInventory}
+                                color='red' >Reset</Button>
+                              </div>
+
+                            </div>
+                          </div>
+                        
+                          {/* {platformSettingsData.map(({ title, options }) => (
                             <div key={title}>
                               <Typography className="mb-4 block text-xs font-semibold uppercase text-blue-gray-500">
                                 {title}
@@ -129,7 +156,7 @@ export function Profile() {
                                 ))}
                               </div>
                             </div>
-                          ))}
+                          ))} */}
                         </div>
                       </div>
 
@@ -139,9 +166,9 @@ export function Profile() {
                     </div>
                   </TabPanel>
                   <TabPanel value="request">
-                        <div className='min-h-screen'>
+                    <div className='min-h-screen'>
 
-                        </div>
+                    </div>
                   </TabPanel>
                 </TabsBody>
               </Tabs>
