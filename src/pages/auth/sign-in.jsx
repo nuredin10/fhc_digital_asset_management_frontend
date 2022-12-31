@@ -34,13 +34,14 @@ export function SignIn() {
     })
       .then(function (response) {
         if (response.data.msg === 'email') {
-          <Alert color="red">Unknown Email</Alert>
+          // <Alert color="red">Unknown Email</Alert>
+          console.log("Email Unknown");
         }
         if (response.data.msg === 'password') {
-          <Alert color="red">Password Incorrect</Alert>
+          // <Alert color="red">Password Incorrect</Alert>
         }
         if (response.data.msg === 'success') {
-          <Alert color="green">Login Success</Alert>
+          // <Alert color="green">Login Success</Alert>
           state.setDecoded(jwt_decode(response.data.accessToken));
           state.setLog(true);
 

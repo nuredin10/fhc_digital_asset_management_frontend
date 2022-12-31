@@ -9,7 +9,7 @@ import { ReactQueryDevtools } from 'react-query/devtools';
 function App() {
   const [log, setLog] = useState(null);
   const [decoded, setDecoded] = useState(null);
-  const queryClient = new QueryClient();
+  // const queryClient = new QueryClient();
   return (
     <LoginContext.Provider value={{ log, setLog, decoded, setDecoded }}>
       {/* <QueryClientProvider client={queryClient}> */}
