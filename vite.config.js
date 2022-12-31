@@ -8,5 +8,9 @@ export default defineConfig({
   },
   server:{
     port: 9000,
-  }
+  },
+  // root: 'src',
+  // build:  {
+  //   outDir: 'build',
+  // },
 });
