@@ -12,11 +12,13 @@ yarn.lock
 
 node_modules
 dist
+build
 dist-ssr
 *.local
 
 # Editor directories and files
 .vscode/*
+.env
 !.vscode/extensions.json
 .idea
 .DS_Store
