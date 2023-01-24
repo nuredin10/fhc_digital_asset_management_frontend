@@ -17,6 +17,7 @@ import {
 } from "@/context";
 import axios from '../../http/axios';
 import Cookies from 'js-cookie';
+import { useSnackbar } from 'notistack';
 
 function formatNumber(number, decPlaces) {
   decPlaces = Math.pow(10, decPlaces);
@@ -49,6 +50,7 @@ export function Configurator() {
     controller;
   const [stars, setStars] = React.useState(0);
   const navigate = useNavigate();
+  const { enqueueSnackbar } = useSnackbar();
 
   const LogoutHandler = () => {
     console.log('clicked')
@@ -58,20 +60,20 @@ export function Configurator() {
     })
       .then(function (response) {
         if (response.data.msg === 'logout') {
+          enqueueSnackbar('Logout Success', { variant: "success" });
           localStorage.clear();
           navigate('/auth/sign-in');
         } 
       })
   }
-  
 
   const sidenavColors = {
     blue: "from-blue-400 to-blue-600",
     "blue-gray": "from-blue-gray-800 to-blue-gray-900",
-    // green: "from-green-400 to-green-600",
-    // orange: "from-orange-400 to-orange-600",
-    // red: "from-red-400 to-red-600",
-    // pink: "from-pink-400 to-pink-600",
+    green: "from-green-400 to-green-600",
+    orange: "from-orange-400 to-orange-600",
+    red: "from-red-400 to-red-600",
+    pink: "from-pink-400 to-pink-600",
   };
 
   return (

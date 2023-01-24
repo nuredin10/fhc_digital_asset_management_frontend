@@ -13,6 +13,7 @@ import {
   Typography,
 } from "@material-tailwind/react";
 import axios from '../../http/axios';
+import { useSnackbar } from 'notistack';
 import { LoginContext } from "@/context/LoginContext";
 
 // Images
@@ -23,9 +24,11 @@ export function SignIn() {
   const [password, setPassword] = useState();
   const state = useContext(LoginContext);
   const navigate = useNavigate();
-
+  const { enqueueSnackbar } = useSnackbar();
 
   const handleSignin = () => {
+    console.log(email, password);
+
     axios.post('/login', {
       email: email,
       password: password,
@@ -34,29 +37,29 @@ export function SignIn() {
     })
       .then(function (response) {
         if (response.data.msg === 'email') {
-          // <Alert color="red">Unknown Email</Alert>
+          enqueueSnackbar('Email Unkown', { variant: "error" });
           console.log("Email Unknown");
         }
         if (response.data.msg === 'password') {
-          // <Alert color="red">Password Incorrect</Alert>
+          enqueueSnackbar('Password Incorrect', { variant: "warning" });
         }
         if (response.data.msg === 'success') {
-          // <Alert color="green">Login Success</Alert>
+          enqueueSnackbar('Login Success', { variant: "success" })
+          // console.log(response.data);
           state.setDecoded(jwt_decode(response.data.accessToken));
           state.setLog(true);
+          state.setAdminStyle(jwt_decode(response.data.adminStyle));
 
           localStorage.setItem('decoded', JSON.stringify(jwt_decode(response.data.accessToken)));
           localStorage.setItem('log', true);
+          localStorage.setItem('adminStyle', JSON.stringify(jwt_decode(response.data.adminStyle)));
 
           navigate('/dashboard/home');
         }
       })
 
 
-    useEffect(() => {
-
-    })
-    console.log(email);
+   
   }
   return (
     <>

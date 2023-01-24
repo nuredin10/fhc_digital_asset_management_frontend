@@ -11,21 +11,45 @@ import {
 import routes from "@/routes";
 import { useMaterialTailwindController, setOpenConfigurator } from "@/context";
 import { LoginContext } from '@/context/LoginContext';
+import { useSnackbar } from 'notistack';
+
 
 // Images
 import logo from '../assets/images/logo.png'
+import axios from '../http/axios';
 export function Dashboard() {
   const [controller, dispatch] = useMaterialTailwindController();
   const { sidenavType } = controller;
   const state = useContext(LoginContext);
   const log = localStorage.getItem('log');
+  const data = JSON.parse(localStorage.getItem('decoded'));
 
   const navigate = useNavigate();
+  const { enqueueSnackbar } = useSnackbar();
+
   // console.log(decoded);
   useEffect(() => {
-    if (!log) {
+    if (!log || !data) {
       navigate('/auth/sign-in');
+    } else {
+      // console.log(data.adminId)
+      axios.post('/checklog', {
+        id: data
+      }, {
+        withCredentials: true,
+      })
+        .then(function (response) {
+          console.log(response.data.msg);
+          if (response.data.msg === 'admin') {
+            enqueueSnackbar('Welcome Back!!',{variant: "Success"})
+          }else{
+            localStorage.clear();
+            navigate('/auth/sign-in');
+          }
+        })
     }
+
+
   }, []);
   return (
     <div>

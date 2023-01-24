@@ -21,6 +21,16 @@ function Add() {
     const [isSuccess, setIsSuccess] = useState("");
     const [alettMsg, setAlertMsg] = useState("");
     const [dialogOpen, setDialogOpen] = useState(false);
+
+    useEffect(() => {
+        axios.get('/assetgroup',{
+            withCredentials: true
+        })
+        .then(function(response){
+            console.log(response.data)
+        })
+    }, []);
+
     const [inputFields, setInputFields] = useState([
         {
             asset_no: '',
@@ -196,6 +206,8 @@ function Add() {
                                             name="asset_group"
                                             label="Asset Group"
                                             type="text"
+                                            select 
+                                            
                                             value={input.asset_group}
                                             onChange={(event) => handleFormChange(index, event)}
                                             fullWidth
