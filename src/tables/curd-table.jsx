@@ -66,7 +66,7 @@ export default function CURDTable({ data, cat, room }) {
     };
 
     const handleSaveRowEdits = async ({ exitEditingMode, row, values }) => {
-        if (!Object.keys(validationErrorss).length) {
+        if (!Object.keys(validationErrors).length) {
             console.log(values);
             tableData[row.index] = values;
             //send/receive api updates here, then refetch or update local table data for re-render
@@ -85,22 +85,6 @@ export default function CURDTable({ data, cat, room }) {
             exitEditingMode(); //required to exit editing mode and close modal
         }
     };
-
-    // const handleDeleteRow = useCallback(
-    //     // console.log('clicked');
-    //     (row) => {
-    //         console.log('clicked')
-    //         if (
-    //             !confirm(`Are you sure you want to delete ${row.getValue('firstName')}`)
-    //         ) {
-    //             return;
-    //         }
-    //         //send api delete request here, then refetch or update local table data for re-render
-    //         tableData.splice(row.index, 1);
-    //         setTableData([...tableData]);
-    //     },
-    //     [tableData],
-    // );
 
     const handleDeleteRow = (row) => {
         console.log("Opened");

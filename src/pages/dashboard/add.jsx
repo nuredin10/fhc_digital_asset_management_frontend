@@ -7,9 +7,13 @@ import {
     Grid,
     TextField,
     IconButton,
-    Button
-
+    Button,
+    MenuItem
 } from '@mui/material'
+import dayjs, { Dayjs } from 'dayjs';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
@@ -22,13 +26,18 @@ function Add() {
     const [alettMsg, setAlertMsg] = useState("");
     const [dialogOpen, setDialogOpen] = useState(false);
 
+    // Select Statement Vaiables
+    const [agroup, setAgroup] = useState();
+    const astatus = [{ id: 1, value: 'Active' }, { id: 2, values: "In-Active" }];
+
     useEffect(() => {
-        axios.get('/assetgroup',{
+        axios.get('/assetgroup', {
             withCredentials: true
         })
-        .then(function(response){
-            console.log(response.data)
-        })
+            .then(function (response) {
+                console.log(response.data);
+                setAgroup(response.data);
+            })
     }, []);
 
     const [inputFields, setInputFields] = useState([
@@ -205,24 +214,40 @@ function Add() {
                                             required
                                             name="asset_group"
                                             label="Asset Group"
-                                            type="text"
-                                            select 
-                                            
+                                            // type="text"
+                                            select
+
                                             value={input.asset_group}
                                             onChange={(event) => handleFormChange(index, event)}
                                             fullWidth
-                                        />
+                                        >
+                                            {agroup && agroup.map((items) => (
+                                                <MenuItem key={items.id} value={items.value}>
+                                                    {items.label}
+                                                </MenuItem>
+                                            ))}
+                                        </TextField>
                                     </Grid>
                                     <Grid item sm={6} md={2} lg={3}>
                                         <TextField
                                             required
                                             name="asset_status"
                                             label="Asset Status"
-                                            type="text"
+                                            // type="text"
+                                            select
                                             value={input.asset_status}
                                             onChange={(event) => handleFormChange(index, event)}
                                             fullWidth
-                                        />
+                                        >
+                                            {
+                                                astatus && astatus.map((items) => (
+                                                    <MenuItem key={items.id} value={items.value}>
+                                                        {items.value}
+                                                    </MenuItem>
+                                                ))
+                                            }
+
+                                        </TextField>
                                     </Grid>
                                     <Grid item sm={6} md={2} lg={3}>
                                         <TextField
@@ -313,7 +338,7 @@ function Add() {
                                         />
                                     </Grid>
                                     <Grid item sm={6} md={2} lg={3}>
-                                        <TextField
+                                        {/* <TextField
                                             required
                                             name="purchase_date"
                                             label="Purchse Date"
@@ -321,7 +346,23 @@ function Add() {
                                             value={input.purchase_date}
                                             onChange={(event) => handleFormChange(index, event)}
                                             fullWidth
-                                        />
+                                        /> */}
+                                        {/* <DateTimePicker
+                                            label="Date&Time picker"
+                                            value={value}
+                                            // onChange={handleChange}
+                                            renderInput={(params) => <TextField {...params} />}
+                                        /> */}
+                                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                            <DatePicker
+                                                label="Purchase Date"
+                                                // value={value}
+                                                // onChange={(newValue) => {
+                                                //     setValue(newValue);
+                                                // }}
+                                                renderInput={(params) => <TextField {...params} />}
+                                            />
+                                        </LocalizationProvider>
                                     </Grid>
                                     <Grid item sm={6} md={2} lg={3}>
                                         <TextField
