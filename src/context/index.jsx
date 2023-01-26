@@ -38,10 +38,10 @@ export function MaterialTailwindControllerProvider({ children }) {
 
   const initialState = {
     openSidenav: false,
-    sidenavColor: adminStyle.sidenav_color,
+    sidenavColor: 'blue',
     sidenavType: 'dark',
     transparentNavbar: true,
-    fixedNavbar: adminStyle.navbar_fixed,
+    fixedNavbar: false,
     openConfigurator: false,
   };
 

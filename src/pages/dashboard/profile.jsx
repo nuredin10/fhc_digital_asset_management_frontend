@@ -225,12 +225,12 @@ export function Profile() {
                     </div>
                   </TabPanel>
                   <TabPanel value="request">
-                    <div className='min-h-screen boo'>
- 
+                    <div className='min-h-screen boor'>
+                        
                     </div>
                   </TabPanel>
                   <TabPanel value="settings">
-                    <div className='min-h-screen'>
+                    <div className='min-h-screen boor'>
 
                     </div>
                   </TabPanel>

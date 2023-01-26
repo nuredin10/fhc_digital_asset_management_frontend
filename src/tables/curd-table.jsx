@@ -45,6 +45,8 @@ export default function CURDTable({ data, cat, room }) {
     const [QRData, setQRData] = useState();
     const printRef = useRef();
     const reportRef = useRef();
+    const admin = JSON.parse(localStorage.getItem('decoded'));
+    console.log(admin)
 
     const { enqueueSnackbar } = useSnackbar();
     const printReport = useReactToPrint({
@@ -70,17 +72,30 @@ export default function CURDTable({ data, cat, room }) {
             console.log(values);
             tableData[row.index] = values;
             //send/receive api updates here, then refetch or update local table data for re-render
-            axios.put('/update', { values }, {
-                withCredentials: true,
-            })
-                .then(function (response) {
-                    if (response.data.msg == 'success') {
-                        console.log('Success');
-                    }
-                    else if (response.data.msg == 'fail') {
-                        console.log('fail')
-                    }
+            if (admin.role == 'SA' || admin.role == 'TL' || admin.role == 'S') {
+                axios.put('/update', { values }, {
+                    withCredentials: true,
                 })
+                    .then(function (response) {
+                        if (response.data.msg == 'success') {
+                            console.log('Success');
+                        }
+                        else if (response.data.msg == 'fail') {
+                            console.log('fail')
+                        }
+                    })
+            } else {
+                axios.post('/addrequest', {
+                    values: values,
+                    name: 'edit',
+                    admin_id: admin.adminId,
+                    req_type: 'edit'
+                }, { withCredentials: true })
+                    .then(function (response) {
+                        console.log(response);
+                    })
+            }
+
             setTableData([...tableData]);
             exitEditingMode(); //required to exit editing mode and close modal
         }

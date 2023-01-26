@@ -100,13 +100,6 @@ export const routes = [
         element: <Tables />,
         available: ["SA", "TL", "S", "A", "BM"]
       },
-      {
-        icon: <BellIcon {...icon} />,
-        name: "notifactions",
-        path: "/notifactions",
-        element: <Notifications />,
-        available: ["SA", "TL", "S"]
-      },
     ],
   },
   {
