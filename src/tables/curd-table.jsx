@@ -79,9 +79,11 @@ export default function CURDTable({ data, cat, room }) {
                     .then(function (response) {
                         if (response.data.msg == 'success') {
                             console.log('Success');
+                            enqueueSnackbar('Update Successful', {variant: 'success'});
                         }
                         else if (response.data.msg == 'fail') {
                             console.log('fail')
+                            enqueueSnackbar('Failed', {vairant: 'error'});
                         }
                     })
             } else {
@@ -92,7 +94,9 @@ export default function CURDTable({ data, cat, room }) {
                     req_type: 'edit'
                 }, { withCredentials: true })
                     .then(function (response) {
-                        console.log(response);
+                        if(response.data.msg == 'success'){
+                            enqueueSnackbar('Request Sent Successfylly', {variant: 'success'});
+                        }
                     })
             }
 

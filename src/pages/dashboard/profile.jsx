@@ -34,6 +34,7 @@ import { ProfileInfoCard, MessageCard } from "@/widgets/cards";
 import { platformSettingsData, conversationsData, projectsData } from "@/data";
 import { LoginContext } from "@/context/LoginContext";
 import CheckProfile from '@/components/CheckProfile';
+import RequestCard from '@/widgets/layout/requestcard';
 import { useSnackbar } from 'notistack';
 
 const roleCheck = (role) => {
@@ -59,6 +60,7 @@ export function Profile() {
   const [pdata, setPdata] = useState();
   const [resetButton, setResetButton] = useState(false);
   const [resetDialog, setResetDialog] = useState(false);
+  const [requestData, setRequestData] = useState();
   const { enqueueSnackbar } = useSnackbar();
   let id = JSON.parse(localStorage.getItem('decoded'));
 
@@ -74,7 +76,7 @@ export function Profile() {
     })
       .then(function (response) {
         setPdata(response.data);
-        console.log(response.data)
+        // console.log(response.data)
       });
 
     axios.get('/asset/checkInv', {
@@ -87,7 +89,14 @@ export function Profile() {
       else if (response.data.state == false) {
         setResetButton(false);
       }
-    })
+    });
+
+    axios.get('/viewrequest', {
+      withCredentials: true
+    }).then(function (response) {
+      console.log(response.data);
+      setRequestData(response.data)
+    });
   }, []);
 
   const resetInventory = () => {
@@ -103,9 +112,7 @@ export function Profile() {
         resetHandler();
       }
     })
-
   }
-
   return (
     <>
       <Dialog open={resetDialog} handler={resetHandler}>
@@ -154,21 +161,25 @@ export function Profile() {
                     <HomeIcon className="-mt-1 mr-2 inline-block h-5 w-5" />
                     App
                   </Tab>
-                  <Tab value="request">
-                    <ChatBubbleLeftEllipsisIcon className="-mt-0.5 mr-2 inline-block h-5 w-5" />
-                    Requests
-                  </Tab>
-                  <Tab value="settings">
-                    <Cog6ToothIcon className="-mt-1 mr-2 inline-block h-5 w-5" />
-                    Settings
-                  </Tab>
+                  {(id.role == 'SA' || id.role == 'TL') &&
+                    <>
+                      <Tab value="request">
+                        <ChatBubbleLeftEllipsisIcon className="-mt-0.5 mr-2 inline-block h-5 w-5" />
+                        Requests
+                      </Tab>
+                      <Tab value="settings">
+                        <Cog6ToothIcon className="-mt-1 mr-2 inline-block h-5 w-5" />
+                        Settings
+                      </Tab>
+                    </>
+                  }
                 </TabsHeader>
                 <TabsBody>
                   <TabPanel value="app">
                     <div className=" gird-cols-1 mb-12 grid gap-12 px-4 lg:grid-cols-2 xl:grid-cols-3">
 
                       {/* Profile Setting */}
-                      <div>
+                      {(id.role == 'SA' || id.role == 'TL') && <div>
                         <Typography variant="h6" color="blue-gray" className="mb-3">
                           Platform Settings
                         </Typography>
@@ -195,29 +206,8 @@ export function Profile() {
 
                             </div>
                           </div>
-
-                          {/* {platformSettingsData.map(({ title, options }) => (
-                            <div key={title}>
-                              <Typography className="mb-4 block text-xs font-semibold uppercase text-blue-gray-500">
-                                {title}
-                              </Typography>
-                              <div className="flex flex-col gap-6">
-                                {options.map(({ checked, label }) => (
-                                  <Switch
-                                    key={label}
-                                    id={label}
-                                    label={label}
-                                    defaultChecked={checked}
-                                    labelProps={{
-                                      className: "text-sm font-normal text-blue-gray-500",
-                                    }}
-                                  />
-                                ))}
-                              </div>
-                            </div>
-                          ))} */}
                         </div>
-                      </div>
+                      </div>}
 
                       {/* Profile Infromation */}
                       {pdata &&
@@ -225,8 +215,13 @@ export function Profile() {
                     </div>
                   </TabPanel>
                   <TabPanel value="request">
-                    <div className='min-h-screen boor'>
-                        
+                    <div className='min-h-screen py-5 flex flex-col gap-5'>
+                      {
+                        requestData &&
+                        requestData.map((items)=>(
+                          <RequestCard name={items.admin_id} req_type={items.name} req_data={items.req_data}/>
+                        ))
+                      }
                     </div>
                   </TabPanel>
                   <TabPanel value="settings">
