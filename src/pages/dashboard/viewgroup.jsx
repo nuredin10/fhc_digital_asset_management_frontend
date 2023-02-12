@@ -41,7 +41,7 @@ export default function ViewGroup() {
           <h1 className='font-bold text-4xl text-blue-700'>Catagories</h1>
           <hr className='w-1/3 border  text-blue-700 border-red-800' />
         </div>
-        <div className='grid grid-cols-4 gap-5 py-5 '>
+        <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 py-5 '>
           {
             group &&
             group.map((item) => (
@@ -63,7 +63,7 @@ export default function ViewGroup() {
           <h1 className='font-bold text-4xl text-blue-700'>Room</h1>
           <hr className='w-1/3 border  text-blue-700 border-red-800' />
         </div>
-        <div className='grid grid-cols-4 gap-5 py-5 '>
+        <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 py-5 '>
           {
             location &&
             location.map((item) => (
