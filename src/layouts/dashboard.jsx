@@ -39,9 +39,8 @@ export function Dashboard() {
         withCredentials: true,
       })
         .then(function (response) {
-          console.log(response.data.msg);
           if (response.data.msg === 'admin') {
-            enqueueSnackbar('Welcome Back!!',{variant: "Success"})
+            // enqueueSnackbar('Welcome Back!!',{variant: "Success"});
           }else{
             localStorage.clear();
             navigate('/auth/sign-in');

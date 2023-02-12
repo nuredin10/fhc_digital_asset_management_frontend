@@ -202,8 +202,10 @@ export function Profile() {
                         </div>
                       </div>}
                       {/* Profile Infromation */}
-                      {pdata &&
-                        <CheckProfile data={pdata} />}
+                      {
+                        pdata &&
+                        <CheckProfile data={pdata} />
+                      }
                     </div>
                   </TabPanel>
                   <TabPanel value="request">
@@ -213,8 +215,13 @@ export function Profile() {
                     <div className='min-h-screen py-5 flex flex-col gap-5'>
                       {
                         requestData &&
-                        requestData.map((items)=>(
-                          <RequestCard key={items.id} name={items.admin_id} req_type={items.name} req_data={items.req_data}/>
+                        requestData.map((items) => (
+                          <>
+                            {
+                              items.validation == 'false' &&
+                              <RequestCard key={items.id} id={items.id} name={items.admin_id} req_type={items.name} req_data={items.req_data} seen={items.seen} validation={items.validation} />
+                            }
+                          </>
                         ))
                       }
                     </div>

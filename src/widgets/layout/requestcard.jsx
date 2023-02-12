@@ -9,6 +9,8 @@ import {
     DialogContentText,
     DialogTitle
 } from '@mui/material';
+import { useSnackbar } from 'notistack';
+
 
 export default function RequestCard(props) {
 
@@ -23,12 +25,29 @@ export default function RequestCard(props) {
     const [deleteItem, setDeleteItem] = useState();
     const [item, setItem] = useState();
 
-    const acceptRequest = (id) => {
+    const { enqueueSnackbar } = useSnackbar();
 
+    const acceptRequest = (id) => {
+        console.log("Id", id);
+        axios.put('/acceptrequest', {
+            id: id,
+            items: props.req_data,
+        }, {
+            withCredentials: true,
+        }).then(function (response) {
+            if (response.data.msg == 'success') {
+                setItem();
+                setAcceptOpen(false);
+                setDeclineOpen(false);
+                enqueueSnackbar('Request Accepted', {
+                    variant: 'success'
+                });
+            }
+        });
     }
 
     const declineRequest = (id) => {
-
+        console.log(id);
     }
 
     const data = JSON.parse(props.req_data);
@@ -43,6 +62,11 @@ export default function RequestCard(props) {
             setName(response.data);
         })
     }, []);
+
+    console.log("AID", props.id);
+    console.log("Id", data.id);
+    console.log("Seen: ", props.seen);
+    console.log("Validation", props.validation);
 
     return (
         <>
@@ -108,11 +132,19 @@ export default function RequestCard(props) {
                 <div className=' col-span-1 py-2'>
                     <div className='flex flex-row gap-1 pl-2'>
                         <h1 className='font-bold'>Admin Name: </h1>
-                        <p>{name && name.fname + " " + name.lname} </p>
+                        <p className='capitalize'>{name && name.fname + " " + name.lname} </p>
                     </div>
                     <div className='flex flex-row gap-1 pl-2'>
                         <h1 className='font-bold'>Request Type: </h1>
-                        <p>{props.req_type}</p>
+                        <p className='text-green-700 capitalize font-bold'>{props.req_type}</p>
+                    </div>
+                    <div className='flex flex-row gap-1 pl-2'>
+                        <h1 className='font-bold'>Validation: </h1>
+                        <p className='text-green-700 capitalize font-bold'>{props.validation}</p>
+                    </div>
+                    <div className='flex flex-row gap-1 pl-2'>
+                        <h1 className='font-bold'>Seen: </h1>
+                        <p className='text-green-700 capitalize font-bold'>{props.seen}</p>
                     </div>
                 </div>
                 <div className='border-l border-gray-200 col-span-2 py-2'>
@@ -159,13 +191,13 @@ export default function RequestCard(props) {
                                 <button
                                     onClick={() => {
                                         setAcceptOpen(true)
-                                        setItem(data.id)
+                                        setItem(props.id)
                                     }}
                                     className='py-2 px-4 normshad rounded-xl text-white bg-green-500 hover:bg-green-700 '>Accept</button>
                                 <button
                                     onClick={() => {
                                         setDeclineOpen(true)
-                                        setItem(data.id)
+                                        setItem(props.id)
                                     }}
                                     className='py-2 px-4 normshad rounded-xl text-white bg-red-500  hover:bg-red-700'>Decline</button>
                             </div>

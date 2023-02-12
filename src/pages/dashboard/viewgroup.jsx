@@ -52,9 +52,7 @@ export default function ViewGroup() {
               </Link>
             ))
           }
-
         </div>
-
       </section>
 
       {/* Room Section */}
