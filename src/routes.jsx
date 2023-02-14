@@ -13,12 +13,13 @@ import {
 import { Home, View, Profile, Tables, Notifications } from "@/pages/dashboard";
 import { SignIn, SignUp } from "@/pages/auth";
 import { MView } from "@/pages/mview";
-import { SquareRounded } from "@mui/icons-material";
+import { NoteOutlined, RecordVoiceOverRounded, SquareRounded } from "@mui/icons-material";
 import ViewGroup from "./pages/dashboard/viewgroup";
 import ViewRoom from "./pages/views/roompage";
 import ViewCat from "./pages/views/catpage";
 import Add from "./pages/dashboard/add";
 import Inventory from "./pages/dashboard/inventory";
+import Record from "./pages/dashboard/record";
 
 const icon = {
   className: "w-5 h-5 text-inherit",
@@ -39,10 +40,6 @@ export const routes = [
         path: "/home",
         element: <Home />,
         available: ["SA", "TL", "S", "A", "BM"],
-        // available: [
-        //   {SA: 'true'},
-        //   {TL: 'true'},
-        // ]
       },
       {
         icon: <PlusIcon {...icon} />,
@@ -98,6 +95,13 @@ export const routes = [
         name: "tables",
         path: "/tables",
         element: <Tables />,
+        available: ["SA", "TL", "S", "A", "BM"]
+      },
+      {
+        icon: <NoteOutlined {...icon} />,
+        name: "records",
+        path: "/record",
+        element: <Record/>,
         available: ["SA", "TL", "S", "A", "BM"]
       },
     ],
