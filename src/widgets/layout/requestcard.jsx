@@ -32,6 +32,7 @@ export default function RequestCard(props) {
         axios.put('/acceptrequest', {
             id: id,
             items: props.req_data,
+            type: props.req_type,
         }, {
             withCredentials: true,
         }).then(function (response) {
@@ -47,7 +48,21 @@ export default function RequestCard(props) {
     }
 
     const declineRequest = (id) => {
-        console.log(id);
+        console.log("Id", id);
+        axios.put("/declinerequest", {
+            id: id,
+        }, {
+            withCredentials: true,
+        }).then(function (response) {
+            if (response.data.msg == 'success') {
+                setItem();
+                setAcceptOpen(false);
+                setDeclineOpen(false);
+                enqueueSnackbar('Request Declined', {
+                    variant: 'success'
+                });
+            }
+        })
     }
 
     const data = JSON.parse(props.req_data);

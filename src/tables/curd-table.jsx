@@ -15,7 +15,6 @@ import {
 } from '@mui/material';
 import {
     Modal,
-    // Button,
     ModalClose,
     Typography,
     Sheet,
@@ -25,7 +24,6 @@ import ethiopianDate from 'ethiopian-date';
 import { toEthiopian } from 'ethiopian-date';
 
 import { Delete, Edit, QrCode } from '@mui/icons-material';
-// import { data, states } from './makeData';
 import axios from '../http/axios';
 import QRCode from '@/components/QRCode';
 import { useReactToPrint } from 'react-to-print';
@@ -79,23 +77,23 @@ export default function CURDTable({ data, cat, room }) {
                     .then(function (response) {
                         if (response.data.msg == 'success') {
                             console.log('Success');
-                            enqueueSnackbar('Update Successful', {variant: 'success'});
+                            enqueueSnackbar('Update Successful', { variant: 'success' });
                         }
                         else if (response.data.msg == 'fail') {
                             console.log('fail')
-                            enqueueSnackbar('Failed', {vairant: 'error'});
+                            enqueueSnackbar('Failed', { vairant: 'error' });
                         }
                     })
             } else {
                 axios.post('/addrequest', {
                     values: values,
-                    name: 'edit',
+                    name: 'Delete',
                     admin_id: admin.adminId,
-                    req_type: 'edit'
+                    req_type: 'Delete'
                 }, { withCredentials: true })
                     .then(function (response) {
-                        if(response.data.msg == 'success'){
-                            enqueueSnackbar('Request Sent Successfylly', {variant: 'success'});
+                        if (response.data.msg == 'success') {
+                            enqueueSnackbar('Request Sent Successfylly', { variant: 'success' });
                         }
                     })
             }
@@ -114,14 +112,30 @@ export default function CURDTable({ data, cat, room }) {
 
     const sendDeleteRequest = () => {
         console.log(deleterow);
-        axios.put('/delete', { deleterow }, {
-            withCredentials: true,
-        }).then(function (response) {
-            if (response.data.msg == 'success') {
-                enqueueSnackbar('Item Deleted', { variant: 'warning' });
-                setOpenDelete(false);
-            }
-        })
+        if (admin.role == 'SA' || admin.role == 'TL' || admin.role == 'S') {
+            axios.put('/delete', { deleterow }, {
+                withCredentials: true,
+            }).then(function (response) {
+                if (response.data.msg == 'success') {
+                    enqueueSnackbar('Item Deleted', { variant: 'warning' });
+                    setOpenDelete(false);
+                }
+            })
+        } else {
+            axios.post('/addrequest', {
+                values: deleterow,
+                name: 'Delete',
+                admin_id: admin.adminId,
+                req_type: 'Delete'
+            }, { withCredentials: true })
+                .then(function (response) {
+                    if (response.data.msg == 'success') {
+                        enqueueSnackbar('Request Sent Successfylly', { variant: 'success' });
+                        setOpenDelete(false);
+                    }
+                })
+        }
+
     };
 
     const printQRCode = (row) => {

@@ -32,6 +32,9 @@ function Add() {
     const [alocation, setAlocation] = useState([]);
     const [assetLocation, setAssetLocation] = useState();
     const { enqueueSnackbar } = useSnackbar();
+    const thing = JSON.parse(localStorage.getItem('decoded'));
+    const admin_id = thing.adminId;
+    const role = thing.role;
 
 
     const astatus = [
@@ -149,20 +152,27 @@ function Add() {
         handleClose();
         console.log(inputFields);
         // console.log(value);
-        axios.post('/add', inputFields)
+        axios.post('/add', { inputFields, admin_id: admin_id, admin_role: thing.role })
             .then(function (response) {
                 if (response.data.msg === 'success') {
                     setAlertMsg('Saved Successfully');
-                    enqueueSnackbar('Saved Successfully',{variant:"success"})
+                    enqueueSnackbar('Saved Successfully', { variant: "success" })
                     setIsSuccess('success');
                     clearAllHandler();
                 }
             })
             .catch(function (response) {
                 // setIsSuccess('error');
-                enqueueSnackbar('Error', {variant: 'error'})
+                enqueueSnackbar('Error', { variant: 'error' })
                 setAlertMsg('Something Went Wrong');
-            })
+            });
+
+        axios.post('/record/add',{
+            admin_id: admin_id,
+            role: role,
+            activity: 'Add',
+            datas: inputFields
+        });
     };
 
     const clearAllHandler = () => {
