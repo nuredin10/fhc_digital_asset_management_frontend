@@ -10,7 +10,7 @@ import {
   PlusIcon,
   ClipboardDocumentCheckIcon
 } from "@heroicons/react/24/solid";
-import { Home, View, Profile, Tables, Notifications } from "@/pages/dashboard";
+import { Home, View, Profile, Tables, Notifications, SignUpNew } from "@/pages/dashboard";
 import { SignIn, SignUp } from "@/pages/auth";
 import { MView } from "@/pages/mview";
 import { NoteOutlined, RecordVoiceOverRounded, SquareRounded } from "@mui/icons-material";
@@ -104,6 +104,13 @@ export const routes = [
         element: <Record />,
         available: ["SA", "TL", "S", "BM"]
       },
+      {
+        icon: <UserPlusIcon {...icon} />,
+        name: "sign up",
+        path: "/sign-up-new",
+        element: <SignUpNew />,
+        available: ["SA", "TL"]
+      },
     ],
   },
   {
@@ -121,7 +128,7 @@ export const routes = [
         name: "sign up",
         path: "/sign-up",
         element: <SignUp />,
-        available: ["SA", "TL"]
+        available: [""]
       },
     ],
   },

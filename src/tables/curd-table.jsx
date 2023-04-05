@@ -120,7 +120,17 @@ export default function CURDTable({ data, cat, room }) {
                     enqueueSnackbar('Item Deleted', { variant: 'warning' });
                     setOpenDelete(false);
                 }
+            });
+            axios.post('/record/add', {
+                admin_id: admin.adminId,
+                role: admin.role,
+                activity: 'Delete',
+                datas: JSON.stringify(deleterow)
+            }).catch((error) => {
+                console.log(error);
             })
+
+
         } else {
             axios.post('/addrequest', {
                 values: deleterow,

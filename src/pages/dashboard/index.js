@@ -7,3 +7,4 @@ export * from "@/pages/dashboard/notifications";
 export * from "@/pages/dashboard/add";
 export * from "@/pages/dashboard/inventory";
 export * from "@/pages/dashboard/record";
+export * from "@/pages/dashboard/signup";
