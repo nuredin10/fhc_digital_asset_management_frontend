@@ -101,8 +101,8 @@ export const routes = [
         icon: <NoteOutlined {...icon} />,
         name: "records",
         path: "/record",
-        element: <Record/>,
-        available: ["SA", "TL", "S", "A", "BM"]
+        element: <Record />,
+        available: ["SA", "TL", "S", "BM"]
       },
     ],
   },

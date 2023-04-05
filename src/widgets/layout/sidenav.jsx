@@ -152,8 +152,7 @@ export function Sidenav({ brandImg, brandName, routes }) {
           }`}
       >
         <Link to="/" className="flex items-center gap-4 py-6 px-2">
-          {/* <Avatar src={brandImg} size="sm" /> */}
-          {/* <Avatar src='https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.facebook.com%2Fadamaastu%2F&psig=AOvVaw2mT8C1qIDmfamErZxuuHW-&ust=1675397061669000&source=images&cd=vfe&ved=0CBAQjRxqFwoTCPjF7dz69fwCFQAAAAAdAAAAABAD' size='sm'/> */}
+          <Avatar src={brandImg} size="sm" />
           <Typography
             variant="h6"
             color={sidenavType === "dark" ? "white" : "blue-gray"}
@@ -206,7 +205,7 @@ export function Sidenav({ brandImg, brandName, routes }) {
         {/* {sideBar(role)} */}
         {routes.map(({ layout, title, pages }, key) => (
           <ul key={key} className=" mb-4 flex flex-col gap-1">
-            {title && title!= 'auth pages' && (
+            {title && title != 'auth pages' && (
               <li className="mx-3.5 mt-4 mb-2">
                 <Typography
                   variant="small"
@@ -220,10 +219,11 @@ export function Sidenav({ brandImg, brandName, routes }) {
 
             {pages.map(({ icon, name, path, available }) => (
               <li
-               key={name}
-               style={{
-                display: available && available.includes(role) ? 'block': 'none',}}
-               >
+                key={name}
+                style={{
+                  display: available && available.includes(role) ? 'block' : 'none',
+                }}
+              >
                 <NavLink to={`/${layout}${path}`}>
                   {({ isActive }) => (
                     <Button
@@ -259,10 +259,8 @@ export function Sidenav({ brandImg, brandName, routes }) {
 }
 
 Sidenav.defaultProps = {
-  // brandImg: "/img/logo-ct.png",
-  brandImg: 'https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.facebook.com%2Fadamaastu%2F&psig=AOvVaw2mT8C1qIDmfamErZxuuHW-&ust=1675397061669000&source=images&cd=vfe&ved=0CBAQjRxqFwoTCPjF7dz69fwCFQAAAAAdAAAAABAD',
-  // brandName: "Asset Management System",
-  brandName: 'ASTU',
+  brandImg: "/img/logo-ct.png",
+  brandName: "Asset Management System",
 };
 
 Sidenav.propTypes = {
