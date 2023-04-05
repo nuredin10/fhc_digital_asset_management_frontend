@@ -152,7 +152,8 @@ export function Sidenav({ brandImg, brandName, routes }) {
           }`}
       >
         <Link to="/" className="flex items-center gap-4 py-6 px-2">
-          <Avatar src={brandImg} size="sm" />
+          {/* <Avatar src={brandImg} size="sm" /> */}
+          {/* <Avatar src='https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.facebook.com%2Fadamaastu%2F&psig=AOvVaw2mT8C1qIDmfamErZxuuHW-&ust=1675397061669000&source=images&cd=vfe&ved=0CBAQjRxqFwoTCPjF7dz69fwCFQAAAAAdAAAAABAD' size='sm'/> */}
           <Typography
             variant="h6"
             color={sidenavType === "dark" ? "white" : "blue-gray"}
@@ -258,8 +259,10 @@ export function Sidenav({ brandImg, brandName, routes }) {
 }
 
 Sidenav.defaultProps = {
-  brandImg: "/img/logo-ct.png",
-  brandName: "Asset Management System",
+  // brandImg: "/img/logo-ct.png",
+  brandImg: 'https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.facebook.com%2Fadamaastu%2F&psig=AOvVaw2mT8C1qIDmfamErZxuuHW-&ust=1675397061669000&source=images&cd=vfe&ved=0CBAQjRxqFwoTCPjF7dz69fwCFQAAAAAdAAAAABAD',
+  // brandName: "Asset Management System",
+  brandName: 'ASTU',
 };
 
 Sidenav.propTypes = {
