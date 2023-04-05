@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import {
-    // Typography,
 } from '@material-tailwind/react';
 import {
     Typography,
@@ -10,7 +9,6 @@ import {
     Button,
     MenuItem
 } from '@mui/material'
-import dayjs, { Dayjs } from 'dayjs';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
@@ -30,12 +28,15 @@ function Add() {
     // Select Statement Vaiables
     const [agroup, setAgroup] = useState([]);
     const [alocation, setAlocation] = useState([]);
-    const [assetLocation, setAssetLocation] = useState();
     const { enqueueSnackbar } = useSnackbar();
     const thing = JSON.parse(localStorage.getItem('decoded'));
     const admin_id = thing.adminId;
     const role = thing.role;
 
+    // Date Pickers
+    const [purchaseDate, setPurchaseDate] = useState();
+    const [commissionDate, setCommissionDate] = useState();
+    const [depreciationDate, setDepreciationDate] = useState();
 
     const astatus = [
         { id: 1, label: "Active", value: "active" },
@@ -46,25 +47,21 @@ function Add() {
         { id: 1, label: "Pcs", value: "Pcs" }
     ]
 
-    // const agroup = [{ id: 1, lable: "Ative", value: 'Active' }, { id: 2, label: "Hello", values: "In-Active" }];
-
     useEffect(() => {
         axios.get('/assetlocation', {
             withCredentials: true,
         }).then(function (response) {
             console.log(response.data);
             setAlocation(response.data);
-            // setAssetLocation()
         });
         axios.get('/assetgroup', {
             withCredentials: true
         }).then(function (response) {
-            // console.log(typeof response.data);
             setAgroup(response.data);
         });
 
     }, []);
-    const [value, setValue] = useState();
+
 
     const [inputFields, setInputFields] = useState([
         {
@@ -90,11 +87,19 @@ function Add() {
         },
     ]);
 
-    const handleFormChange = (index, event) => {
+    const handleFormChange = (index, event, check) => {
         let data = [...inputFields];
         if (event.$L == "en") {
+            if (check == "purchase_date") {
+                data[index]['purchase_date'] = event.$d;
+            }
+            if (check == "commission_date") {
+                data[index]['commission_date'] = event.$d;
+            }
+            if (check == "depreciation_date") {
+                data[index]['depreciation_date'] = event.$d;
+            }
             console.log(event);
-            data[index]['purchase_date'] = event.$d;
             setInputFields(data);
         } else {
             data[index][event.target.name] = event.target.value;
@@ -137,9 +142,6 @@ function Add() {
         setDialogOpen(false);
     }
 
-
-
-
     const removeFields = (index) => {
         let data = [...inputFields];
         data.splice(index, 1);
@@ -151,7 +153,7 @@ function Add() {
     const submitHandler = () => {
         handleClose();
         console.log(inputFields);
-        // console.log(value);
+        console.log(value);
         axios.post('/add', { inputFields, admin_id: admin_id, admin_role: thing.role })
             .then(function (response) {
                 if (response.data.msg === 'success') {
@@ -162,12 +164,11 @@ function Add() {
                 }
             })
             .catch(function (response) {
-                // setIsSuccess('error');
                 enqueueSnackbar('Error', { variant: 'error' })
                 setAlertMsg('Something Went Wrong');
             });
 
-        axios.post('/record/add',{
+        axios.post('/record/add', {
             admin_id: admin_id,
             role: role,
             activity: 'Add',
@@ -208,19 +209,15 @@ function Add() {
                     container>
 
                 </Grid>
-
-                {/* {isSuccess != "" ? (
-                    <CustomAlert setIsSuccess={setIsSuccess} type={isSuccess} message={alertMsg} />
-                ) : null} */}
                 <Grid item lg={12} sm={12} md={12} sx={{ p: 5, mt: -3 }}>
                     <Grid container spacing={4}>
                         {inputFields.map((input, index) => (
                             <Grid
+                                key={index}
                                 container
                                 spacing={2}
                                 sx={{
                                     boxShadow: "rgba(99, 99, 99, 0.2) 0px 2px 8px 0px",
-                                    // border: '1px solid black',
                                     ml: 3,
                                     mt: 3,
                                     backgroundColor: "white",
@@ -236,7 +233,7 @@ function Add() {
                                         label="Name"
                                         type="text"
                                         value={input.name}
-                                        onChange={(event) => handleFormChange(index, event)}
+                                        onChange={(event) => handleFormChange(index, event, "no")}
                                         fullWidth />
                                 </Grid>
                                 <Grid item sm={6} md={2} lg={3}>
@@ -246,7 +243,7 @@ function Add() {
                                         label="Asset Number"
                                         type="text"
                                         value={input.asset_no}
-                                        onChange={(event) => handleFormChange(index, event)}
+                                        onChange={(event) => handleFormChange(index, event, "no")}
                                         fullWidth />
                                 </Grid>
                                 <Grid item sm={6} md={2} lg={3}>
@@ -254,11 +251,9 @@ function Add() {
                                         required
                                         name="asset_group"
                                         label="Asset Group"
-                                        // type="text"
                                         select
-
                                         value={input.asset_group}
-                                        onChange={(event) => handleFormChange(index, event)}
+                                        onChange={(event) => handleFormChange(index, event, "no")}
                                         fullWidth
                                     >
                                         {agroup && agroup.map((items) => (
@@ -276,7 +271,7 @@ function Add() {
                                         // type="text"
                                         select
                                         value={input.asset_status}
-                                        onChange={(event) => handleFormChange(index, event)}
+                                        onChange={(event) => handleFormChange(index, event, "no")}
                                         fullWidth
                                     >
                                         {astatus && astatus.map((items) => (
@@ -294,7 +289,7 @@ function Add() {
                                         label="Class Code"
                                         type="text"
                                         value={input.class_code}
-                                        onChange={(event) => handleFormChange(index, event)}
+                                        onChange={(event) => handleFormChange(index, event, "no")}
                                         fullWidth />
                                 </Grid>
                                 <Grid item sm={6} md={2} lg={3}>
@@ -304,7 +299,7 @@ function Add() {
                                         label="Posting Group"
                                         type="text"
                                         value={input.posting_group}
-                                        onChange={(event) => handleFormChange(index, event)}
+                                        onChange={(event) => handleFormChange(index, event, "no")}
                                         fullWidth />
                                 </Grid>
                                 <Grid item sm={6} md={2} lg={3}>
@@ -314,7 +309,7 @@ function Add() {
                                         label="Sub Code"
                                         type="text"
                                         value={input.sub_code}
-                                        onChange={(event) => handleFormChange(index, event)}
+                                        onChange={(event) => handleFormChange(index, event, "no")}
                                         fullWidth />
                                 </Grid>
                                 <Grid item sm={6} md={2} lg={3}>
@@ -322,10 +317,9 @@ function Add() {
                                         required
                                         name="location_code"
                                         label="Location Code"
-                                        // type="text"
                                         select
                                         value={input.location_code}
-                                        onChange={(event) => handleFormChange(index, event)}
+                                        onChange={(event) => handleFormChange(index, event, "no")}
                                         fullWidth
                                     >
                                         {alocation && alocation.map((items) => (
@@ -342,7 +336,7 @@ function Add() {
                                         label="Owner"
                                         type="text"
                                         value={input.owner}
-                                        onChange={(event) => handleFormChange(index, event)}
+                                        onChange={(event) => handleFormChange(index, event, "no")}
                                         fullWidth />
                                 </Grid>
                                 <Grid item sm={6} md={2} lg={3}>
@@ -352,7 +346,7 @@ function Add() {
                                         label="Entrusted Id"
                                         type="text"
                                         value={input.entrusted_id}
-                                        onChange={(event) => handleFormChange(index, event)}
+                                        onChange={(event) => handleFormChange(index, event, "no")}
                                         fullWidth />
                                 </Grid>
                                 <Grid item sm={6} md={2} lg={3}>
@@ -362,7 +356,7 @@ function Add() {
                                         label="Price"
                                         type="text"
                                         value={input.price}
-                                        onChange={(event) => handleFormChange(index, event)}
+                                        onChange={(event) => handleFormChange(index, event, "no")}
                                         fullWidth />
                                 </Grid>
                                 <Grid item sm={6} md={2} lg={3}>
@@ -372,55 +366,37 @@ function Add() {
                                         label="Residual Value"
                                         type="text"
                                         value={input.residual_value}
-                                        onChange={(event) => handleFormChange(index, event)}
+                                        onChange={(event) => handleFormChange(index, event, "no")}
                                         fullWidth />
                                 </Grid>
                                 <Grid item sm={6} md={2} lg={3}>
-                                    {/* <TextField
-            required
-            name="purchase_date"
-            label="Purchse Date"
-            type="text"
-            value={input.purchase_date}
-            onChange={(event) => handleFormChange(index, event)}
-            fullWidth
-        /> */}
-                                    {/* <DateTimePicker
-            label="Date&Time picker"
-            value={value}
-            // onChange={handleChange}
-            renderInput={(params) => <TextField {...params} />}
-        /> */}
                                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                                         <DatePicker
                                             name="purchase_date"
                                             label="Purchase Date"
-                                            value={value}
-                                            onChange={(event) => handleFormChange(index, event)}
+                                            value={purchaseDate}
+                                            onChange={(event) => {
+                                                handleFormChange(index, event, "purchase_date");
+                                                setPurchaseDate(event.$d);
+
+                                            }}
                                             renderInput={(params) => <TextField {...params} />}
                                             fullWidth />
                                     </LocalizationProvider>
                                 </Grid>
                                 <Grid item sm={6} md={2} lg={3}>
-                                    {/* <TextField
-                                        required
-                                        name="commission_date"
-                                        label="Commission Date"
-                                        type="text"
-                                        value={input.commission_date}
-                                        onChange={(event) => handleFormChange(index, event)}
-                                        fullWidth /> */}
-
                                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                                         <DatePicker
                                             name="commission_date"
                                             label="Commission Date"
-                                            value={value}
-                                            onChange={(event) => handleFormChange(index, event)}
+                                            value={commissionDate}
+                                            onChange={(event) => {
+                                                handleFormChange(index, event, "commission_date");
+                                                setCommissionDate(event.$d);
+                                            }}
                                             renderInput={(params) => <TextField {...params} />}
                                             fullWidth />
                                     </LocalizationProvider>
-
                                 </Grid>
                                 <Grid item sm={6} md={2} lg={3}>
                                     <TextField
@@ -433,20 +409,15 @@ function Add() {
                                         fullWidth />
                                 </Grid>
                                 <Grid item sm={6} md={2} lg={3}>
-                                    {/* <TextField
-                                        required
-                                        name="depreciation_start_date"
-                                        label="Depreciation Start Date"
-                                        type="text"
-                                        value={input.depreciation_start_date}
-                                        onChange={(event) => handleFormChange(index, event)}
-                                        fullWidth /> */}
                                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                                         <DatePicker
                                             name="depreciation_start_date"
                                             label="Depreciation Start Date"
-                                            value={value}
-                                            onChange={(event) => handleFormChange(index, event)}
+                                            value={depreciationDate}
+                                            onChange={(event) => {
+                                                handleFormChange(index, event, "depreciation_date");
+                                                setDepreciationDate(event.$d);
+                                            }}
                                             renderInput={(params) => <TextField {...params} />}
                                             fullWidth />
                                     </LocalizationProvider>
@@ -458,7 +429,7 @@ function Add() {
                                         label="Document Number"
                                         type="text"
                                         value={input.document_number}
-                                        onChange={(event) => handleFormChange(index, event)}
+                                        onChange={(event) => handleFormChange(index, event, "no")}
                                         fullWidth />
                                 </Grid>
                                 <Grid item sm={6} md={2} lg={3}>
@@ -468,7 +439,7 @@ function Add() {
                                         label="Quantity"
                                         type="text"
                                         value={input.quantity}
-                                        onChange={(event) => handleFormChange(index, event)}
+                                        onChange={(event) => handleFormChange(index, event, "no")}
                                         fullWidth />
                                 </Grid>
                                 <Grid item sm={6} md={2} lg={3}>
@@ -476,10 +447,9 @@ function Add() {
                                         required
                                         name="unit"
                                         label="Unit"
-                                        // type="text"
                                         select
                                         value={input.unit}
-                                        onChange={(event) => handleFormChange(index, event)}
+                                        onChange={(event) => handleFormChange(index, event, "no")}
                                         fullWidth >
                                         {
                                             aunit && aunit.map((items) => (
