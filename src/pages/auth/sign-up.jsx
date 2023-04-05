@@ -34,106 +34,6 @@ export function SignUp() {
 
   const { enqueueSnackbar } = useSnackbar();
 
-  // const Form = () => {
-  //   const initialValues = {
-  //     fname: "",
-  //     lname: "",
-  //     uname: "",
-  //     email: "",
-  //     phone: "",
-  //     nrole: "",
-  //     password: ""
-  //   };
-  //   const [formValues, setFormValues] = useState(initialValues);
-  //   const [formErrors, setFormErrors] = useState({});
-  //   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  //   const submitForm = () => {
-  //     console.log(formValues);
-  //   };
-
-  //   const handleChange = (e) => {
-  //     e.preventDefault();
-  //     setFormErrors(validate(formValues));
-  //     setIsSubmitting(true);
-  //   };
-
-  //   const validate = (values) => {
-  //     let errors = {};
-  //     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
-  //     if (!values.email) {
-
-  //     }
-  //   }
-
-  // }
-
-  // const initialValues = {
-  //   fname: "",
-  //   lname: "",
-  //   uname: "",
-  //   email: "",
-  //   phone: "",
-  //   nrole: "",
-  //   password: ""
-  // };
-  // const SignUpSchema = Yup.object().shape({
-  //   fname: Yup.string()
-  //     .min(3, "Name Short!")
-  //     .required("First Name is required"),
-  //   lname: Yup.string()
-  //     .min(3, "Name Short!")
-  //     .required("First Name is required"),
-  //   uname: Yup.string()
-  //     .required("Username is required"),
-  //   email: Yup.string()
-  //     .email()
-  //     .required("Email is required"),
-  //   phone: Yup.string()
-  //     .min(3, "Phone Number must be longer"),
-  //   nrole: Yup.required("Role is Required"),
-  //   password: Yup.string()
-  //     .min(8, "Password must be greater than 8 characters"),
-
-  // })
-
-  // const formik = useFormik({
-  //   initialValues: {
-  //     fname: "",
-  //     lname: "",
-  //     uname: "",
-  //     email: "",
-  //     phone: "",
-  //     nrole: "",
-  //     password: ""
-  //   },
-  //   validationSchema: Yup.object({
-  //     fname: Yup.string().min(3, "Name Short!").required("First Name is required"),
-  //     lname: Yup.string().min(3, "Name Short!").required("First Name is required"),
-  //     uname: Yup.string().required("Username is required"),
-  //     email: Yup.string().email().required("Email is required"),
-  //     phone: Yup.string().min(3, "Phone Number must be longer"),
-  //     // nrole: Yup.required("Role is Required"),
-  //     password: Yup.string().min(8, "Password must be greater than 8 characters"),
-  //   }),
-
-  //   onSubmit: () => {
-  //     console.log('clicked');
-  //     // axios.post('/signup', data, {
-  //     //   withCredentials: true
-  //     // })
-  //     //   .then(function (response) {
-  //     //     if (response.data.msg === 'success') {
-  //     //       // <Alert>Account Successfully created</Alert>
-  //     //       // console.log('Account Creation Success');
-  //     //       enqueueSnackbar('AccountSuccessfullt Created', { variant: 'success' });
-
-  //     //     }
-  //     //   }).catch(function (error) {
-  //     //     <Alert color="red">THere was an error creating the Account</Alert>
-  //     //   });
-  //   }
-  // });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -152,7 +52,9 @@ export function SignUp() {
       .then(function (response) {
         if (response.data.msg === 'success') {
           enqueueSnackbar('AccountSuccessfullt Created', { variant: 'success' });
-
+        }
+        if(response.data.msg === 'email'){
+          enqueueSnackbar('Email Already Exists', { variant: 'warning' });
         }
       }).catch(function (error) {
         enqueueSnackbar("Unable to Create Account", { variant: 'error' });
@@ -164,8 +66,8 @@ export function SignUp() {
         src="https://images.unsplash.com/photo-1497294815431-9365093b7331?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1950&q=80"
         className="absolute inset-0 z-0 h-full w-full object-cover"
       />
-      <div className="absolute inset-0 z-0 h-full w-full bg-black/50" />
-      <div className="container mx-auto p-4">
+      <div className="absolute inset-0 z-0 h-full m-20 w-full bg-black/50 p-20" />
+      <div className="container mx-auto p-4 py-20">
         <Card className="absolute top-2/4 left-2/4 w-full max-w-[24rem] -translate-y-2/4 -translate-x-2/4">
           <CardHeader
             variant="gradient"

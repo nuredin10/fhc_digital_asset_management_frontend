@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect, useState, useContext } from "react";
+import { LoginContext } from '@/context/LoginContext';
 import PropTypes from "prop-types";
 
 export const MaterialTailwind = React.createContext(null);
@@ -31,10 +32,14 @@ export function reducer(state, action) {
 }
 
 export function MaterialTailwindControllerProvider({ children }) {
+  const state = useContext(LoginContext);
+  const adminStyle = JSON.parse(localStorage.getItem('adminStyle'));
+  // console.log(adminStyle);
+
   const initialState = {
     openSidenav: false,
-    sidenavColor: "blue",
-    sidenavType: "dark",
+    sidenavColor: 'blue',
+    sidenavType: 'dark',
     transparentNavbar: true,
     fixedNavbar: false,
     openConfigurator: false,
@@ -45,6 +50,7 @@ export function MaterialTailwindControllerProvider({ children }) {
     () => [controller, dispatch],
     [controller, dispatch]
   );
+
 
   return (
     <MaterialTailwind.Provider value={value}>

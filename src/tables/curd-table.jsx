@@ -15,7 +15,6 @@ import {
 } from '@mui/material';
 import {
     Modal,
-    // Button,
     ModalClose,
     Typography,
     Sheet,
@@ -25,7 +24,6 @@ import ethiopianDate from 'ethiopian-date';
 import { toEthiopian } from 'ethiopian-date';
 
 import { Delete, Edit, QrCode } from '@mui/icons-material';
-// import { data, states } from './makeData';
 import axios from '../http/axios';
 import QRCode from '@/components/QRCode';
 import { useReactToPrint } from 'react-to-print';
@@ -45,6 +43,8 @@ export default function CURDTable({ data, cat, room }) {
     const [QRData, setQRData] = useState();
     const printRef = useRef();
     const reportRef = useRef();
+    const admin = JSON.parse(localStorage.getItem('decoded'));
+    console.log(admin)
 
     const { enqueueSnackbar } = useSnackbar();
     const printReport = useReactToPrint({
@@ -66,41 +66,42 @@ export default function CURDTable({ data, cat, room }) {
     };
 
     const handleSaveRowEdits = async ({ exitEditingMode, row, values }) => {
-        if (!Object.keys(validationErrorss).length) {
+        if (!Object.keys(validationErrors).length) {
             console.log(values);
             tableData[row.index] = values;
             //send/receive api updates here, then refetch or update local table data for re-render
-            axios.put('/update', { values }, {
-                withCredentials: true,
-            })
-                .then(function (response) {
-                    if (response.data.msg == 'success') {
-                        console.log('Success');
-                    }
-                    else if (response.data.msg == 'fail') {
-                        console.log('fail')
-                    }
+            if (admin.role == 'SA' || admin.role == 'TL' || admin.role == 'S') {
+                axios.put('/update', { values }, {
+                    withCredentials: true,
                 })
+                    .then(function (response) {
+                        if (response.data.msg == 'success') {
+                            console.log('Success');
+                            enqueueSnackbar('Update Successful', { variant: 'success' });
+                        }
+                        else if (response.data.msg == 'fail') {
+                            console.log('fail')
+                            enqueueSnackbar('Failed', { vairant: 'error' });
+                        }
+                    })
+            } else {
+                axios.post('/addrequest', {
+                    values: values,
+                    name: 'Delete',
+                    admin_id: admin.adminId,
+                    req_type: 'Delete'
+                }, { withCredentials: true })
+                    .then(function (response) {
+                        if (response.data.msg == 'success') {
+                            enqueueSnackbar('Request Sent Successfylly', { variant: 'success' });
+                        }
+                    })
+            }
+
             setTableData([...tableData]);
             exitEditingMode(); //required to exit editing mode and close modal
         }
     };
-
-    // const handleDeleteRow = useCallback(
-    //     // console.log('clicked');
-    //     (row) => {
-    //         console.log('clicked')
-    //         if (
-    //             !confirm(`Are you sure you want to delete ${row.getValue('firstName')}`)
-    //         ) {
-    //             return;
-    //         }
-    //         //send api delete request here, then refetch or update local table data for re-render
-    //         tableData.splice(row.index, 1);
-    //         setTableData([...tableData]);
-    //     },
-    //     [tableData],
-    // );
 
     const handleDeleteRow = (row) => {
         console.log("Opened");
@@ -111,14 +112,30 @@ export default function CURDTable({ data, cat, room }) {
 
     const sendDeleteRequest = () => {
         console.log(deleterow);
-        axios.put('/delete', { deleterow }, {
-            withCredentials: true,
-        }).then(function (response) {
-            if (response.data.msg == 'success') {
-                enqueueSnackbar('Item Deleted', { variant: 'warning' });
-                setOpenDelete(false);
-            }
-        })
+        if (admin.role == 'SA' || admin.role == 'TL' || admin.role == 'S') {
+            axios.put('/delete', { deleterow }, {
+                withCredentials: true,
+            }).then(function (response) {
+                if (response.data.msg == 'success') {
+                    enqueueSnackbar('Item Deleted', { variant: 'warning' });
+                    setOpenDelete(false);
+                }
+            })
+        } else {
+            axios.post('/addrequest', {
+                values: deleterow,
+                name: 'Delete',
+                admin_id: admin.adminId,
+                req_type: 'Delete'
+            }, { withCredentials: true })
+                .then(function (response) {
+                    if (response.data.msg == 'success') {
+                        enqueueSnackbar('Request Sent Successfylly', { variant: 'success' });
+                        setOpenDelete(false);
+                    }
+                })
+        }
+
     };
 
     const printQRCode = (row) => {

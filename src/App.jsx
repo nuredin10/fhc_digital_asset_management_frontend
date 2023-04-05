@@ -9,13 +9,12 @@ import { ReactQueryDevtools } from 'react-query/devtools';
 function App() {
   const [log, setLog] = useState(null);
   const [decoded, setDecoded] = useState(null);
-  // const queryClient = new QueryClient();
+  const [adminStyle, setAdminStyle] = useState(null);
+ 
+
   return (
-    <LoginContext.Provider value={{ log, setLog, decoded, setDecoded }}>
-      {/* <QueryClientProvider client={queryClient}> */}
+    <LoginContext.Provider value={{ log, setLog, decoded, setDecoded, adminStyle, setAdminStyle }}>
         <Main />
-        {/* <ReactQueryDevtools initialIsOpen={false} /> */}
-      {/* </QueryClientProvider> */}
     </LoginContext.Provider>
   );
 }

@@ -45,9 +45,10 @@ function Inventory() {
                 </Typography>
                 <hr className='border  text-blue-700 border-red-800' />
             </div>
-            <div>
+            <div >
                 <Card>
-                    <CardBody>
+                    <CardBody
+                    >
                         <Tabs value="counted">
                             <TabsHeader className=''>
                                 <Tab value="counted">
@@ -59,7 +60,9 @@ function Inventory() {
                                     Uncounted
                                 </Tab>
                             </TabsHeader>
-                            <TabsBody>
+                            <TabsBody
+                               
+                            >
                                 <TabPanel value="counted">
                                     <div>
                                         {

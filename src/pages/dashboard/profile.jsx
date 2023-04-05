@@ -34,6 +34,7 @@ import { ProfileInfoCard, MessageCard } from "@/widgets/cards";
 import { platformSettingsData, conversationsData, projectsData } from "@/data";
 import { LoginContext } from "@/context/LoginContext";
 import CheckProfile from '@/components/CheckProfile';
+import RequestCard from '@/widgets/layout/requestcard';
 import { useSnackbar } from 'notistack';
 
 const roleCheck = (role) => {
@@ -59,6 +60,7 @@ export function Profile() {
   const [pdata, setPdata] = useState();
   const [resetButton, setResetButton] = useState(false);
   const [resetDialog, setResetDialog] = useState(false);
+  const [requestData, setRequestData] = useState();
   const { enqueueSnackbar } = useSnackbar();
   let id = JSON.parse(localStorage.getItem('decoded'));
 
@@ -74,22 +76,24 @@ export function Profile() {
     })
       .then(function (response) {
         setPdata(response.data);
-        console.log(response.data)
       });
 
     axios.get('/asset/checkInv', {
       withCredentials: true,
     }).then(function (response) {
-      console.log(response.data);
       if (response.data.state == true) {
         setResetButton(true);
       }
       else if (response.data.state == false) {
         setResetButton(false);
       }
-    })
+    });
+    axios.get('/viewrequest', {
+      withCredentials: true
+    }).then(function (response) {
+      setRequestData(Array.from(response.data));
+    });
   }, []);
-
   const resetInventory = () => {
     axios.put('/asset/reset', {
       id: id,
@@ -103,9 +107,7 @@ export function Profile() {
         resetHandler();
       }
     })
-
   }
-
   return (
     <>
       <Dialog open={resetDialog} handler={resetHandler}>
@@ -119,7 +121,6 @@ export function Profile() {
             </div>
           </div>
         </DialogBody>
-
       </Dialog>
       <div className="relative mt-8 h-72 w-full overflow-hidden rounded-xl bg-[url(https://images.unsplash.com/photo-1531512073830-ba890ca4eba2?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80)] bg-cover	bg-center">
         <div className="absolute inset-0 h-full w-full bg-blue-500/50" />
@@ -154,21 +155,25 @@ export function Profile() {
                     <HomeIcon className="-mt-1 mr-2 inline-block h-5 w-5" />
                     App
                   </Tab>
-                  <Tab value="request">
-                    <ChatBubbleLeftEllipsisIcon className="-mt-0.5 mr-2 inline-block h-5 w-5" />
-                    Requests
-                  </Tab>
-                  <Tab value="settings">
-                    <Cog6ToothIcon className="-mt-1 mr-2 inline-block h-5 w-5" />
-                    Settings
-                  </Tab>
+                  {(id.role == 'SA' || id.role == 'TL') &&
+                    <>
+                      <Tab value="request">
+                        <ChatBubbleLeftEllipsisIcon className="-mt-0.5 mr-2 inline-block h-5 w-5" />
+                        Requests
+                      </Tab>
+                      <Tab value="settings">
+                        <Cog6ToothIcon className="-mt-1 mr-2 inline-block h-5 w-5" />
+                        Settings
+                      </Tab>
+                    </>
+                  }
                 </TabsHeader>
                 <TabsBody>
                   <TabPanel value="app">
                     <div className=" gird-cols-1 mb-12 grid gap-12 px-4 lg:grid-cols-2 xl:grid-cols-3">
 
                       {/* Profile Setting */}
-                      <div>
+                      {(id.role == 'SA' || id.role == 'TL') && <div>
                         <Typography variant="h6" color="blue-gray" className="mb-3">
                           Platform Settings
                         </Typography>
@@ -179,7 +184,6 @@ export function Profile() {
                               <div className='flex flex-row gap-3 items-center'>
                                 <Typography className='block text-xs font-bold uppercase'>Reset Inventory</Typography>
                                 {
-                                  // console.log(resetButton)
                                   resetButton == false ? (<Button
                                     // disabled
                                     onClick={resetHandler}
@@ -195,42 +199,35 @@ export function Profile() {
 
                             </div>
                           </div>
-
-                          {/* {platformSettingsData.map(({ title, options }) => (
-                            <div key={title}>
-                              <Typography className="mb-4 block text-xs font-semibold uppercase text-blue-gray-500">
-                                {title}
-                              </Typography>
-                              <div className="flex flex-col gap-6">
-                                {options.map(({ checked, label }) => (
-                                  <Switch
-                                    key={label}
-                                    id={label}
-                                    label={label}
-                                    defaultChecked={checked}
-                                    labelProps={{
-                                      className: "text-sm font-normal text-blue-gray-500",
-                                    }}
-                                  />
-                                ))}
-                              </div>
-                            </div>
-                          ))} */}
                         </div>
-                      </div>
-
+                      </div>}
                       {/* Profile Infromation */}
-                      {pdata &&
-                        <CheckProfile data={pdata} />}
+                      {
+                        pdata &&
+                        <CheckProfile data={pdata} />
+                      }
                     </div>
                   </TabPanel>
                   <TabPanel value="request">
-                    <div className='min-h-screen boo'>
- 
+                    {/* <div>
+                        <h1>Request</h1>
+                    </div> */}
+                    <div className='min-h-screen py-5 flex flex-col gap-5'>
+                      {
+                        requestData &&
+                        requestData.map((items) => (
+                          <>
+                            {
+                              items.validation == 'false' &&
+                              <RequestCard key={items.id} id={items.id} name={items.admin_id} req_type={items.name} req_data={items.req_data} seen={items.seen} validation={items.validation} />
+                            }
+                          </>
+                        ))
+                      }
                     </div>
                   </TabPanel>
                   <TabPanel value="settings">
-                    <div className='min-h-screen'>
+                    <div className='min-h-screen boor'>
 
                     </div>
                   </TabPanel>
